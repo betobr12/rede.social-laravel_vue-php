@@ -1,40 +1,49 @@
 <template>
+
   <span>
-    <div class="row">
-      <grid-vue class="input-field" tamanho="12">
-        <textarea id="textarea1" class="materialize-textarea"></textarea>
-        <label for="textarea1">O que está acontecendo?</label>
-      </grid-vue>
-      <p>
-        <grid-vue tamanho="2 offset-s10" class="waves-effect waves-light btn">Publicar</grid-vue><!-- Botao -->
-      </p>
-    </div>
-    <card-conteudo-vue perfil="http://materializecss.com/images/yuna.jpg" nome="Rodrigo Teste" data="17/02/2021 - 16:55">
-      <card-detalhe-vue img="https://materializecss.com/images/sample-1.jpg" titulo="Imagem Nova" txt="Valores aleatorios">
-      </card-detalhe-vue>
+
+    <publicar-conteudo-vue />
+
+
+    <card-conteudo-vue
+      perfil="http://materializecss.com/images/yuna.jpg"
+      nome="Maria Silva"
+      data="13/01/18 13:30">
+        <card-detalhe-vue
+          img="http://materializecss.com/images/sample-1.jpg"
+          titulo=""
+          txt="I am a very simple card. I am good at containing small bits of information.
+          I am convenient because I require little markup to use effectively."  />
     </card-conteudo-vue>
+
   </span>
+
+
+
 </template>
 
 <script>
-import CardConteudoVue  from '@/components/social/CardConteudoVue'
+import CardConteudoVue from '@/components/social/CardConteudoVue'
 import CardDetalheVue from '@/components/social/CardDetalheVue'
-import GridVue from '@/components/layouts/GridVue'
+import PublicarConteudoVue from '@/components/social/PublicarConteudoVue'
+
 
 export default {
   name: 'Home',
   data () {
     return {
+
     }
   },
-  components: {
+  components:{
     CardConteudoVue,
     CardDetalheVue,
-    GridVue
+    PublicarConteudoVue
   }
 }
 </script>
-<!-- Add " CardConteudoVuescoped" attribute to limit CSS to this component only -->
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
 </style>

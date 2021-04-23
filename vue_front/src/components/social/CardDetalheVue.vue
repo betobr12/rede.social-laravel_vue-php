@@ -10,9 +10,7 @@
   </span>
 </template>
 <script>
-  export default {
-    name: 'CardDetalheVue',
-    props: ['img', 'titulo', 'txt']
+export default {name:'CardDetalheVue',props:['img','titulo','txt']
   }
 </script>
 

@@ -14,7 +14,7 @@
                 </grid-vue>
                 <grid-vue tamanho="8">
                   <span class="black-text">
-                    <h5>Rodrigo Teste</h5>
+                    <h5>Roberto</h5>
                     Add the "circle" class to it to make it appear circular.
                   </span>
                 </grid-vue>
