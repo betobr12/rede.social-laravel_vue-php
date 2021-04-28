@@ -31,10 +31,10 @@
 
 import LoginTemplate from '@/templates/LoginTemplate'
 export default {
-  name: 'Login',
+  name: 'Cadastro',
   data () {
     return {
-      cadastro: false,
+      cadastro: true,
     }
   },
   components:{

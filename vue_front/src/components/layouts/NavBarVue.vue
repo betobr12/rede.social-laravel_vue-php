@@ -2,11 +2,9 @@
   <div>
     <nav v-bind:class="cor || 'blue'">
       <div class="nav-wrapper container">
-        <a v-bind:href="url || '#'" class="brand-logo center">{{logo || 'Site'}}</a>
+        <router-link v-bind:to="url || '/'" class="brand-logo center">{{logo || 'Site'}}</router-link>
         <ul id="nav-mobile" class="left hide-on-med-and-down">
-          <li><a href="sass.html">Sass</a></li>
-          <li><a href="badges.html">Components</a></li>
-          <li><a href="collapsible.html">JavaScript</a></li>
+          <slot />
         </ul>
       </div>
     </nav>

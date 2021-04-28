@@ -2,6 +2,8 @@
 
 > exibir
 
+# access https://router.vuejs.org/guide/essentials/history-mode.html to config your serve
+
 ## Build Setup
 
 ``` bash
