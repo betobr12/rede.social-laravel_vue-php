@@ -6,22 +6,11 @@
     </span>
 
     <span slot="principal">
-      <span v-if="!cadastro">
         <h2>Login</h2>
         <input type="text" placeholder="E-mail" value="">
         <input type="password" placeholder="Senha" value="">
         <button class="btn">Entrar</button>
-        <button class="btn orange" v-on:click="cadastro = !cadastro">CADASTRE-SE</button>
-      </span>
-      <span v-if="cadastro">
-        <h2>Cadastre-se</h2>
-        <input type="text" placeholder="nome" value="">
-        <input type="text" placeholder="E-mail" value="">
-        <input type="password" placeholder="Senha" value="">
-        <input type="password" placeholder="Confirme sua Senha" value="">
-        <button type="button" class="btn">Enviar</button>
-        <button class="btn orange" v-on:click="cadastro = !cadastro">JÁ TENHO UMA CONTA</button>
-      </span>
+        <router-link class="btn orange" to="/cadastro">CADASTRE-SE</router-link>
     </span>
 
   </login-template>
@@ -34,7 +23,7 @@ export default {
   name: 'Login',
   data () {
     return {
-      cadastro: false,
+
     }
   },
   components:{
