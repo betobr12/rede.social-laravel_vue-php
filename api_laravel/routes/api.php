@@ -18,6 +18,15 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login',    [UserController::class, 'login']);
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+//Route::post('profile',    [UserController::class, 'update']);
+/*
+Route::middleware('auth:api')->put('/profile', function (Request $request) {
+    $user = $request->user();
+    $data = $request->all();
+
+    return $data;
+});
+ */
+Route::group(['middleware' => 'auth:api'], function(){
+    Route::put('/profile' , [UserController::class, 'update']);
 });
