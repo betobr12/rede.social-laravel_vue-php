@@ -50,7 +50,7 @@ export default {
       })
       .then(response => {
         console.log(response)
-        if(response.data.data.token){
+        if(response.data.success){
           // login com sucesso
           console.log('login com sucesso')
         }else if(response.data.status == false){
