@@ -1,44 +1,68 @@
 <template>
-  <login-template>
+  <site-template>
 
     <span slot="menuesquerdo">
         <img src="https://www.frontiersin.org/image/journal/1606/thumbnail" class="responsive-img">
     </span>
 
     <span slot="principal">
-        <h2>Cadastre-se</h2>
+        <h2>Perfil</h2>
         <input type="text" placeholder="Nome" v-model="name">
         <input type="text" placeholder="E-mail" v-model="email">
+        <div class="file-field input-field">
+          <div class="btn">
+            <span>Imagem</span>
+            <input type="file">
+          </div>
+        <div class="file-path-wrapper">
+          <input class="file-path validate" type="text">
+        </div>
+        </div>
         <input type="password" placeholder="Senha" v-model="password">
         <input type="password" placeholder="Confirme sua Senha" v-model="password_confirmation">
-        <button type="button" class="btn" v-on:click="register()">Enviar</button>
-        <router-link  class="btn orange" to="/login">JÁ TENHO UMA CONTA</router-link >
+        <button type="button" class="btn" v-on:click="profile()">Atualizar</button>
     </span>
 
-  </login-template>
+  </site-template>
 </template>
 
 <script>
 
-import LoginTemplate from '@/templates/LoginTemplate'
+import SiteTemplate from '@/templates/SiteTemplate'
 import axios from 'axios'
 export default {
-  name: 'Cadastro',
+  name: 'Perfil',
   data() {
     return {
+      usuario:false,
       name: '',
       email: '',
       password: '',
       password_confirmation: ''
     }
   },
+  created(){
+    let usuarioAux = sessionStorage.getItem('usuario') // para resgatar os valores da sessao criados no login.vue
+    if(usuarioAux){
+      this.usuario = JSON.parse(usuarioAux);
+      this.name = this.usuario.user.name; // mostrando dados que estão na sessao
+      this.email = this.usuario.user.email;
+
+    }
+  },
+  methods: {
+    sair(){
+      sessionStorage.clear(); //limpar a sessão
+      this.usuario = false
+    }
+  },
   components:{
-    LoginTemplate
+    SiteTemplate
   },
   methods:{
-    register(){
+    profile(){
       console.log("ok");
-      axios.post('http://127.0.0.1:8000/api/register', {
+      axios.post('http://127.0.0.1:8000/api/perfil', {
         name: this.name,
         email: this.email,
         password:this.password,

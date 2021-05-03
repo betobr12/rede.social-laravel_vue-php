@@ -3,8 +3,10 @@
     <header>
       <nav-bar-vue logo="Social" url="/" cor="blue-grey">
           <li><router-link to="/">Home</router-link></li>
-          <li><router-link to="/login">Entrar</router-link></li>
-          <li><router-link to="/cadastro">Cadastre-se</router-link></li>
+          <li v-if="!usuario"><router-link to="/login">Entrar</router-link></li>
+          <li v-if="!usuario"><router-link to="/cadastro">Cadastre-se</router-link></li>
+          <li v-if="usuario"><router-link to="/perfil">{{usuario.user.name}}</router-link></li>
+          <li v-if="usuario"><a v-on:click="sair()">Sair</a></li>
       </nav-bar-vue>
     </header>
     <main>
@@ -42,12 +44,34 @@ import CardMenuVue from '@/components/layouts/CardMenuVue'
 
 export default {
   name: 'SiteTemplate',
+    data(){
+    return{
+      usuario: false //variavel criada para o template
+    }
+  },
   components: {
     NavBarVue,
     FooterVue,
     GridVue,
     CardMenuVue
-  }
+  },
+  created(){
+    console.log('created()');
+    let usuarioAux = sessionStorage.getItem('usuario') // para resgatar os valores da sessao criados no login.vue
+    if(usuarioAux){
+      this.usuario = JSON.parse(usuarioAux);
+    }else{
+      this.$router.push('/login')
+    }
+  },
+  methods: {
+    sair(){
+      sessionStorage.clear(); //limpar a sessão
+      this.usuario = false
+      this.$router.push('/login')
+    }
+  },
+
 }
 </script>
 

@@ -27,9 +27,7 @@
 
 <script>
 import LoginTemplate from '@/templates/LoginTemplate'
-import axios from 'axios';
-
-
+import axios from 'axios'
 export default {
   name: 'Login',
   data () {
@@ -53,16 +51,26 @@ export default {
         if(response.data.success){
           // login com sucesso
           console.log('login com sucesso')
+          sessionStorage.setItem('usuario',JSON.stringify(response.data))
+          this.$router.push('/')
         }else if(response.data.status == false){
           //login não existe
           console.log('login não existe')
+          alert('Login invalido!');
         }else{
           // erros de validação
           console.log('erros de validação')
+          let erros ='';
+          for(let erro of Object.values(response.data.error)){
+            erros += erro +" ";
+          }
+          alert(erros);
         }
       })
       .catch(e => {
         console.log(e)
+        alert("Falha! Tente novamente mais tarde")
+
       })
     }
   }

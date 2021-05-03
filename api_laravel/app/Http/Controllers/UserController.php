@@ -17,16 +17,17 @@ class UserController extends Controller
 
         $validator = Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255','unique:users'],
             'password' => ['required', 'string', 'min:8'],
         ],[
             'name.required'         => 'Nome do usuario obrigatorio',
             'name.max'              => 'Caractere maximo para o nome foi ultrapassado',
             'email.required'        => 'Email obrigatorio',
+            'email.unique'    => 'Esse email foi cadastrado para outro usuario',
             'email.max'             => 'Caractere maximo para o email foi ultrapassado',
             'email.email'           => 'Email invalido',
             'password.required'     => 'Senha obrigatoria',
-            'password.min'          => 'Senha com menos de 8 caracteres',
+            'password.min'          => 'É necessario mais caracteres para senha',
            ]
         );
 
@@ -41,7 +42,7 @@ class UserController extends Controller
                 ])){
                     $user->token = $user->createToken($request->email)->accessToken;
 
-                    return response()->json(array("success"=>"Usuario registrado com sucesso","User"=>$user));
+                    return response()->json(array("success"=>"Usuario registrado com sucesso","user"=>$user));
                 }else{
                     return response()->json(array("error"=>"Erro ao registrar o usuario"));
                 }
@@ -60,10 +61,10 @@ class UserController extends Controller
         'email' => ['required', 'string', 'email', 'max:255'],
         'password' => ['required', 'string'],
         ],[
-            'email.required'        => 'Email obrigatorio',
-            'email.max'             => 'Caractere maximo para o email foi ultrapassado',
-            'email.email'           => 'Email invalido',
-            'password.required'     => 'Senha obrigatoria',
+            'email.required'        => 'Email obrigatorio. ',
+            'email.max'             => 'Caractere maximo para o email foi ultrapassado. ',
+            'email.email'           => 'Email invalido. ',
+            'password.required'     => 'Senha obrigatoria. ',
            ]
         );
 
@@ -74,7 +75,7 @@ class UserController extends Controller
                 $user = auth()->user();
                 $user->token = $user->createToken($data['email'])->accessToken;
 
-                return response()->json(array("success"=>"Usuario logado com sucesso","data"=>$user));
+                return response()->json(array("success"=>"Usuario logado com sucesso","user"=>$user));
             }else{
                 return response()->json(array("error"=>"Erro ao autenticar"));
             }
