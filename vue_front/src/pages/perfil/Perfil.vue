@@ -1,10 +1,8 @@
 <template>
   <site-template>
-
     <span slot="menuesquerdo">
-        <img src="https://www.frontiersin.org/image/journal/1606/thumbnail" class="responsive-img">
+        <img :src="usuario.user.imagem" class="responsive-img">
     </span>
-
     <span slot="principal">
         <h2>Perfil</h2>
         <input type="text" placeholder="Nome" v-model="name">
@@ -12,7 +10,7 @@
         <div class="file-field input-field">
           <div class="btn">
             <span>Imagem</span>
-            <input type="file">
+            <input type="file" v-on:change="salvaImagem">
           </div>
         <div class="file-path-wrapper">
           <input class="file-path validate" type="text">
@@ -22,73 +20,113 @@
         <input type="password" placeholder="Confirme sua Senha" v-model="password_confirmation">
         <button type="button" class="btn" v-on:click="profile()">Atualizar</button>
     </span>
-
   </site-template>
 </template>
 
 <script>
+import SiteTemplate from '@/templates/SiteTemplate';
+import axios from 'axios';
 
-import SiteTemplate from '@/templates/SiteTemplate'
-import axios from 'axios'
 export default {
   name: 'Perfil',
-  data() {
+  data () {
     return {
       usuario:false,
-      name: '',
-      email: '',
-      password: '',
-      password_confirmation: ''
+      name:'',
+      email:'',
+      password:'',
+      password_confirmation:'',
+      imagem:''
     }
   },
-  created(){
+
+  created() {
     let usuarioAux = sessionStorage.getItem('usuario') // para resgatar os valores da sessao criados no login.vue
     if(usuarioAux){
       this.usuario = JSON.parse(usuarioAux);
       this.name = this.usuario.user.name; // mostrando dados que estão na sessao
       this.email = this.usuario.user.email;
+    }
+  },
 
-    }
-  },
-  methods: {
-    sair(){
-      sessionStorage.clear(); //limpar a sessão
-      this.usuario = false
-    }
-  },
-  components:{
+  components: {
     SiteTemplate
   },
-  methods:{
-    profile(){
+
+  methods: {
+    sair() {
+      sessionStorage.clear(); //limpar a sessão
+      this.usuario = false
+    },
+
+    /*
+        salvaImagem(e) {
+     // var preview = document.querySelector('img');
+      var file    = document.querySelector('input[type=file]').files[0];
+      var reader  = new FileReader();
+
+      reader.onloadend = (e) => {
+       // preview.src = reader.result;
+       this.imagem = reader.result;
+      }
+
+      if (file) {
+        reader.readAsDataURL(file);
+      } else {
+      //  preview.src = "";
+      }
+      console.log(this.imagem);
+    },
+    */
+
+    salvaImagem(e){
+      let arquivo = e.target.files || e.dataTransfer.files;
+      if(!arquivo.length){
+        return;
+      }
+      let reader = new FileReader();
+      reader.onloadend = (e) => {
+        this.imagem = e.target.result;
+      };
+      reader.readAsDataURL(arquivo[0]);
+    },
+
+    profile() {
       axios.put('http://127.0.0.1:8000/api/profile', {
         name: this.name,
         email: this.email,
-        password:this.password,
-        password_confirmation:this.password_confirmation
+        imagem: this.imagem,
+        password: this.password,
+        password_confirmation: this.password_confirmation
       },{"headers":{"authorization":"Bearer "+this.usuario.user.token}})
       .then(response => {
-        //console.log(response)
-        if(response.data.success){
-          // login com sucesso
-          console.log(response.data);
-          sessionStorage.setItem('usuario',JSON.stringify(response.data))
-          alert('Perfil atualizado!');
-        }else{
-          // erros de validação
-          console.log('erros de validação')
-          let erros = '';
-          for(let erro of Object.values(response.data.error)){
-            erros += erro +" ";
+          //console.log(response)
+          if (response.data.success){
+            // login com sucesso
+            console.log(response.data);
+
+            this.usuario = response.data;
+            sessionStorage.setItem('usuario',JSON.stringify(response.data))
+            alert('Perfil atualizado!');
+
+          } else {
+            // erros de validação
+            console.log('erros de validação')
+            let erros = '';
+            for (let erro of Object.values(response.data.error)) {
+              erros += erro +" ";
+            }
+            alert(erros);
           }
-          alert(erros);
         }
-      })
+      )
       .catch(e => {
         console.log(e)
-        alert("Erro! Tente novamente mais tarde!");
-      })
+        alert('Erro! Tente novamente mais tarde!')
+        }
+      )
     }
+
   }
 }
 </script>
