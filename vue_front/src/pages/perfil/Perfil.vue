@@ -1,7 +1,7 @@
 <template>
   <site-template>
     <span slot="menuesquerdo">
-        <img :src="usuario.user.imagem" class="responsive-img">
+        <img :src="usuario.user.url" class="responsive-img">
     </span>
     <span slot="principal">
         <h2>Perfil</h2>
@@ -16,6 +16,7 @@
           <input class="file-path validate" type="text">
         </div>
         </div>
+        <input type="text" placeholder="Descrição do perfil (opcional)" v-model="description">
         <input type="password" placeholder="Senha" v-model="password">
         <input type="password" placeholder="Confirme sua Senha" v-model="password_confirmation">
         <button type="button" class="btn" v-on:click="profile()">Atualizar</button>
@@ -36,7 +37,8 @@ export default {
       email:'',
       password:'',
       password_confirmation:'',
-      imagem:''
+      imagem:'',
+      description:''
     }
   },
 
@@ -46,6 +48,7 @@ export default {
       this.usuario = JSON.parse(usuarioAux);
       this.name = this.usuario.user.name; // mostrando dados que estão na sessao
       this.email = this.usuario.user.email;
+      this.description = this.usuario.user.description;
     }
   },
 
@@ -96,6 +99,7 @@ export default {
         name: this.name,
         email: this.email,
         imagem: this.imagem,
+        description: this.description,
         password: this.password,
         password_confirmation: this.password_confirmation
       },{"headers":{"authorization":"Bearer "+this.usuario.user.token}})

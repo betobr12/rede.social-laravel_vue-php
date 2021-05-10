@@ -3,12 +3,12 @@
     <span slot="menuesquerdo">
       <div class="row valign-wrapper">
         <grid-vue tamanho="4">
-          <img src="https://materializecss.com/images/yuna.jpg" alt="" class="circle responsive-img"> <!-- notice the "circle" class -->
+          <img :src="usuario.user.url" :alt="usuario.user.name" class="circle responsive-img"> <!-- notice the "circle" class -->
         </grid-vue>
         <grid-vue tamanho="8">
           <span class="black-text">
-            <h5>Roberto</h5>
-            Add the "circle" class to it to make it appear circular.
+            <h5>{{ usuario.user.name }}</h5>
+            {{ usuario.user.description }}
           </span>
         </grid-vue>
       </div>
@@ -43,6 +43,17 @@ export default {
   name: 'Home',
   data () {
     return {
+      usuario: false,
+
+    }
+  },
+  created() {
+    let usuarioAux = sessionStorage.getItem('usuario') // para resgatar os valores da sessao criados no login.vue
+    if(usuarioAux){
+      this.usuario = JSON.parse(usuarioAux);
+      this.name = this.usuario.user.name; // mostrando dados que estão na sessao
+      this.url = this.usuario.user.url; // mostrando dados que estão na sessao
+      this.description = this.usuario.user.description;
     }
   },
   components:{

@@ -39,10 +39,12 @@ class UserController extends Controller
         }else{
             if(!User::where('email','=',$request->email)->first()){
                 if($user = User::create([
-                    'name' => $data['name'],
-                    'email' => $data['email'],
-                    'password' => Hash::make($data['password']),
+                    'name'      => $data['name'],
+                    'email'     => $data['email'],
+                    'password'  => Hash::make($data['password']),
                 ])){
+                    $user->url = "http://127.0.0.1:8000/img/usuario.jpg";
+                    $user->save();
                     $user->token = $user->createToken($request->email)->accessToken;
                     return response()->json(array("success"=>"Usuario registrado com sucesso","user"=>$user));
                 }else{
@@ -81,11 +83,10 @@ class UserController extends Controller
         }
     }
 
-    protected function update(Request $request){
+    protected function update(Request $request)
+    {
         $user = $request->user();
         $data = $request->all();
-
-
 
         if (isset($data['password'])) {
             $validator = Validator::make($data, [
@@ -126,8 +127,9 @@ class UserController extends Controller
             return response()->json(array("error"=>$validator->errors()));
         } else {
             if ($user = User::where('id','=',$user->id)->first()) {
-                $user->name     = $data['name'];
-                $user->email    = $data['email'];
+                $user->name         = $data['name'];
+                $user->email        = $data['email'];
+                $user->description  = $data['description'] ?: "Olá meu nome é $user->name";
 
                 if (isset($data['imagem'])) {
                     $image_manipulator = new ImageManipulator();
@@ -135,20 +137,25 @@ class UserController extends Controller
                     $image_manipulator->id                  = $user->id;
                     $image_manipulator->image_name          = $user->imagem;
                     $image_manipulator->directory           = 'profile';
-                    $image_manipulator->server              = 'http://127.0.0.1:8000/';
                     $image_manipulator->id_directory        = 'perfil_id';
                     $image_manipulator->image_data_exists   = $user->imagem;
-                    $image_name = $image_manipulator->pathImageCreate();
-
-                    $user->imagem = $image_name->image_name;
+                    $data_image = $image_manipulator->pathImageCreate();
+                    if ($data_image == false) {
+                        return response()->json(array("error"=>"Formato invalido, insira apenas, JPG, PNG ou SVG"));
+                    }
+                    $user->imagem = $data_image->image_name;
+                    $user->url    = $data_image->url;
                 }
 
                 if(isset($data['password'])) {
                     $user->password = Hash::make($data['password']);
                 }
-                $user->save();
-                $user->token = $user->createToken($request->email)->accessToken;
-                return response()->json(array("success"=>"Usuario alterado com sucesso","user"=>$user));
+                if ($user->save()){
+                    $user->token = $user->createToken($request->email)->accessToken;
+                    return response()->json(array("success"=>"Usuario alterado com sucesso","user"=>$user));
+                } else {
+                    return response()->json(array("error"=>"Ocorreu uma falha ao alterar as informações, tente mais tarde"));
+                }
             } else {
                 return response()->json(array("error"=>"Esse email foi cadastrado para outro usuario"));
             }
