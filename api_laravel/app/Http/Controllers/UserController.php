@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Auth\RegisterController;
+use App\Libraries\ImageManipulator;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -83,7 +84,9 @@ class UserController extends Controller
     protected function update(Request $request){
         $user = $request->user();
         $data = $request->all();
-        $server = "http://127.0.0.1:8000";
+
+
+
         if (isset($data['password'])) {
             $validator = Validator::make($data, [
                 'name' => ['required', 'string', 'max:255'],
@@ -119,38 +122,34 @@ class UserController extends Controller
             );
         }
 
-        if($validator->fails()){
+        if ($validator->fails()){
             return response()->json(array("error"=>$validator->errors()));
-        }else{
-            if($user = User::where('id','=',$user->id)->first()){
+        } else {
+            if ($user = User::where('id','=',$user->id)->first()) {
                 $user->name     = $data['name'];
                 $user->email    = $data['email'];
-                $user->password = Hash::make($data['password']);
-                if(isset($data['imagem'])){
-                    $time = time();
-                    $diretorioPai = 'profile';
-                   // $diretorioImagem = $diretorioPai.DIRECTORY_SEPARATOR.'perfil_id'.$user->id;
-                    $diretorioImagem = $diretorioPai.'/'.'perfil_id'.$user->id;
-                    $ext = substr($data['imagem'], 11, strpos($data['imagem'], ';') - 11);
-                    //$urlImagem = $diretorioImagem.DIRECTORY_SEPARATOR.$time.'.'.$ext;
-                    $urlImagem = $diretorioImagem.'/'.$time.'.'.$ext;
 
-                    $file = str_replace('data:image/'.$ext.';base64,','',$data['imagem']);
-                    $file = base64_decode($file);
+                if (isset($data['imagem'])) {
+                    $image_manipulator = new ImageManipulator();
+                    $image_manipulator->image               = $data["imagem"];
+                    $image_manipulator->id                  = $user->id;
+                    $image_manipulator->image_name          = $user->imagem;
+                    $image_manipulator->directory           = 'profile';
+                    $image_manipulator->server              = 'http://127.0.0.1:8000/';
+                    $image_manipulator->id_directory        = 'perfil_id';
+                    $image_manipulator->image_data_exists   = $user->imagem;
+                    $image_name = $image_manipulator->pathImageCreate();
 
-                    if(!file_exists($diretorioPai)){
-                      mkdir($diretorioPai,0700);
-                    }
-                    if(!file_exists($diretorioImagem)){
-                      mkdir($diretorioImagem,0700);
-                    }
-                    file_put_contents($urlImagem,$file);
-                    $user->imagem = $server.'/'.$urlImagem; // mudar logica
+                    $user->imagem = $image_name->image_name;
+                }
+
+                if(isset($data['password'])) {
+                    $user->password = Hash::make($data['password']);
                 }
                 $user->save();
                 $user->token = $user->createToken($request->email)->accessToken;
                 return response()->json(array("success"=>"Usuario alterado com sucesso","user"=>$user));
-            }else{
+            } else {
                 return response()->json(array("error"=>"Esse email foi cadastrado para outro usuario"));
             }
         }
