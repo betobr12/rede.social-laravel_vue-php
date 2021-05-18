@@ -14,7 +14,7 @@ use Laravel\Passport\HasApiTokens;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens;
-    use SoftDeletes;
+   // use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -52,7 +52,7 @@ class User extends Authenticatable
 
     public function comments()
     {
-        return $this->hasMany(Comentario::class);
+        return $this->hasMany(Comment::class);
     }
 
     public function contents()

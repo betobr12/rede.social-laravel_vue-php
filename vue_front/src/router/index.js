@@ -29,6 +29,6 @@ export default new Router({
       path: '/perfil',
       name: 'Perfil',
       component: Perfil
-    },
+    }
   ]
 })

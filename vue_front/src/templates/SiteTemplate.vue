@@ -46,9 +46,10 @@ import CardMenuVue from '@/components/layouts/CardMenuVue'
 
 export default {
   name: 'SiteTemplate',
-    data(){
-    return{
-      usuario: false //variavel criada para o template
+  data()
+  {
+    return {
+      usuario: false // variavel criada para o template
     }
   },
   components: {
@@ -58,7 +59,7 @@ export default {
     CardMenuVue
   },
   created(){
-    console.log('created()');
+    console.log('created()')
     let usuarioAux = sessionStorage.getItem('usuario') // para resgatar os valores da sessao criados no login.vue
     if(usuarioAux){
       this.usuario = JSON.parse(usuarioAux);
