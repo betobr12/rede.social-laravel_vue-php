@@ -36,9 +36,7 @@
     </footer-vue>
   </span>
 </template>
-
 <script>
-
 import NavBarVue  from '@/components/layouts/NavBarVue'
 import FooterVue from '@/components/layouts/FooterVue'
 import GridVue from '@/components/layouts/GridVue'
@@ -46,8 +44,7 @@ import CardMenuVue from '@/components/layouts/CardMenuVue'
 
 export default {
   name: 'SiteTemplate',
-  data()
-  {
+  data() {
     return {
       usuario: false // variavel criada para o template
     }
@@ -58,26 +55,23 @@ export default {
     GridVue,
     CardMenuVue
   },
-  created(){
+  created() {
     console.log('created()')
     let usuarioAux = sessionStorage.getItem('usuario') // para resgatar os valores da sessao criados no login.vue
-    if(usuarioAux){
+    if (usuarioAux) {
       this.usuario = JSON.parse(usuarioAux);
-    }else{
+    } else {
       this.$router.push('/login')
     }
   },
   methods: {
-    sair(){
+    sair() {
       sessionStorage.clear(); //limpar a sessão
       this.usuario = false
       this.$router.push('/login')
     }
   },
-
 }
 </script>
-
 <style>
-
 </style>

@@ -1,10 +1,8 @@
 <template>
   <login-template>
-
     <span slot="menuesquerdo">
         <img src="https://www.frontiersin.org/image/journal/1606/thumbnail" class="responsive-img">
     </span>
-
     <span slot="principal">
         <h2>Cadastre-se</h2>
         <input type="text" placeholder="Nome" v-model="name">
@@ -14,12 +12,9 @@
         <button type="button" class="btn" v-on:click="register()">Enviar</button>
         <router-link  class="btn orange" to="/login">JÁ TENHO UMA CONTA</router-link >
     </span>
-
   </login-template>
 </template>
-
 <script>
-
 import LoginTemplate from '@/templates/LoginTemplate'
 export default {
   name: 'Cadastro',
@@ -31,34 +26,34 @@ export default {
       password_confirmation: ''
     }
   },
-  components:{
+  components: {
     LoginTemplate
   },
-  methods:{
-    register(){
+  methods: {
+    register() {
       console.log("ok");
       this.$http.post(this.$urlAPI+'register', {
         name: this.name,
         email: this.email,
-        password:this.password,
-        password_confirmation:this.password_confirmation
+        password: this.password,
+        password_confirmation: this.password_confirmation
       })
       .then(response => {
         console.log(response)
-        if(response.data.success){
+        if (response.data.success) {
           // login com sucesso
           console.log('Cadastro realizado com sucesso')
           sessionStorage.setItem('usuario',JSON.stringify(response.data))
           this.$router.push('/')
-        }else if(response.data.status == false){
+        } else if (response.data.status == false){
           //Erro no cadastro
           alert('Falha ao cadastrar! Tente mais tarde');
-        }else{
+        } else {
           // erros de validação
           console.log('erros de validação')
           let erros ='';
-          for(let erro of Object.values(response.data.error)){
-            erros += erro +" ";
+          for (let erro of Object.values(response.data.error)) {
+            erros += erro +"";
           }
           alert(erros);
         }
@@ -66,7 +61,6 @@ export default {
       .catch(e => {
         console.log(e)
         alert("Falha! Tente novamente mais tarde")
-
       })
     }
   }
