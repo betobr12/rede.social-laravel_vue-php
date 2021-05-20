@@ -1,14 +1,23 @@
 <template>
   <div class="row">
     <grid-vue class="input-field" tamanho="12">
-      <input type="text" v-model="conteudo.titulo">
-      <textarea v-if="conteudo.titulo" v-model="conteudo.texto" class="materialize-textarea" placeholder="Conteudo"></textarea>
-      <input type="text" v-if="conteudo.titulo && conteudo.texto" placeholder="Link" v-model="conteudo.link">
-      <input type="text" v-if="conteudo.titulo && conteudo.texto" placeholder="Url da Imagem" v-model="conteudo.imagem">
+      <input type="text" v-model="content.title">
+      <textarea v-if="content.title" v-model="content.description" class="materialize-textarea" placeholder="Conteudo"></textarea>
+      <input type="text" v-if="content.title && content.description" placeholder="Link" v-model="content.link">
+     <!-- <input type="text" v-if="content.title && content.description" placeholder="Url da Imagem" v-model="content.image"> -->
+        <div class="file-field input-field" v-if="content.title && content.description">
+          <div class="btn">
+            <span>Imagem</span>
+            <input type="file" v-on:change="salvaImagem">
+          </div>
+        <div class="file-path-wrapper">
+          <input class="file-path validate" type="text" >
+        </div>
+        </div>
       <label>O que está acontecendo?</label>
     </grid-vue>
-    <p>
-      <grid-vue v-if="conteudo.titulo && conteudo.texto" class="btn waves-effect waves-light" tamanho="2 offset-s10">Publicar</grid-vue>
+    <p class="right-align">
+      <button v-on:click="addContent()" v-if="content.title && content.description" class="btn waves-effect waves-light" >Publicar</button>
     </p>
   </div>
 </template>
@@ -18,20 +27,57 @@ import GridVue from '@/components/layouts/GridVue'
 
 export default {
   name: 'PublicarConteudoVue',
-  props:[],
+  props:['usuario'],
   data () {
     return {
-      conteudo: {
-        titulo: '',
-        texto: '',
+      content: {
+        title: '',
+        description: '',
         link: '',
-        imagem: '',
+        image: '',
       }
     }
   },
-  components:{
+  components: {
     GridVue
-  }
+  },
+  methods: {
+    salvaImagem(e){
+      let arquivo = e.target.files || e.dataTransfer.files;
+      if(!arquivo.length){
+        return;
+      }
+      let reader = new FileReader();
+      reader.onloadend = (e) => {
+        this.content.image = e.target.result;
+      };
+      reader.readAsDataURL(arquivo[0]);
+    },
+    addContent() {
+      console.log(this.content);
+      this.$http.post(this.$urlAPI+'content',{
+        title: this.content.title,
+        description: this.content.description,
+        link: this.content.link,
+        image: this.content.image,
+      },{"headers": {
+        "authorization":"Bearer "+this.usuario.user.token//recuperar token do usuario
+        }
+      }).then(response => {
+        if (response.data.success) {
+          console.log(response.data.content);
+          alert(response.data.success);
+        } else {
+          alert(response.data.error);
+        }
+      }).catch(e => {
+        console.log(e)
+        alert('Erro! Tente novamente mais tarde!')
+        }
+      )
+    },
+
+  },
 }
 </script>
 

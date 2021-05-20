@@ -3,19 +3,19 @@
     <span slot="menuesquerdo">
       <div class="row valign-wrapper">
         <grid-vue tamanho="4">
-          <img :src="usuario.user.url" :alt="usuario.user.name" class="circle responsive-img"> <!-- notice the "circle" class -->
+          <img :src="user.url" :alt="user.name" class="circle responsive-img"> <!-- notice the "circle" class -->
         </grid-vue>
         <grid-vue tamanho="8">
           <span class="black-text">
-            <h5>{{ usuario.user.name }}</h5>
-            {{ usuario.user.description }}
+            <h5>{{ user.name }}</h5>
+            {{ user.description }}
           </span>
         </grid-vue>
       </div>
     </span>
 
     <span slot="principal">
-      <publicar-conteudo-vue />
+      <publicar-conteudo-vue :user="user" /> <!-- Passando usuario por um propos para o publicar-->
       <card-conteudo-vue
         perfil="http://materializecss.com/images/yuna.jpg"
         nome="Maria Silva"
@@ -43,17 +43,17 @@ export default {
   name: 'Home',
   data () {
     return {
-      usuario: false,
+      user: false,
 
     }
   },
   created() {
-    let usuarioAux = sessionStorage.getItem('usuario') // para resgatar os valores da sessao criados no login.vue
+    let usuarioAux = sessionStorage.getItem('user') // para resgatar os valores da sessao criados no login.vue
     if(usuarioAux){
-      this.usuario = JSON.parse(usuarioAux);
-      this.name = this.usuario.user.name; // mostrando dados que estão na sessao
-      this.url = this.usuario.user.url; // mostrando dados que estão na sessao
-      this.description = this.usuario.user.description;
+      this.user = JSON.parse(usuarioAux);
+      this.name = this.user.name; // mostrando dados que estão na sessao
+      this.url = this.user.url; // mostrando dados que estão na sessao
+      this.description = this.user.description;
     }
   },
   components:{

@@ -2,84 +2,67 @@
 
 namespace App\Http\Controllers;
 
+use App\Libraries\ImageManipulator;
 use App\Models\Content;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ContentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    protected function new(Request $request)
     {
-        //
+        $user = $request->user();
+        $data = $request->all();
+
+        $validator = Validator::make($data, [
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+
+        ],[
+            'title.required'         => 'Titulo obrigatorio',
+            'description.required'          => 'Texto obrigatorio',
+
+           ]
+        );
+
+        //return response()->json(array("success"=>"Post inserido com sucesso!", "content"=>$data['image']));
+
+        if ($validator->fails()) {
+            return response()->json(array("error"=>$validator->errors()));
+        } else {
+            if ($content = Content::create([
+                'user_id'       => $user->id,
+                'title'         => $data['title'],
+                'description'   => $data['description'],
+                'link'          => $data['link'],
+                'created_at'    =>\Carbon\Carbon::now()->format('Y-m-d'),
+            ])) {
+                if (isset($data['image'])) {
+                    $image_manipulator = new ImageManipulator();
+                    $image_manipulator->image               = $data["image"];
+                    $image_manipulator->id                  = $user->id; //coloca um id na pasta
+                    $image_manipulator->image_name          = $content->title;
+                    $image_manipulator->directory           = 'content';
+                    $image_manipulator->id_directory        = 'content_id';
+                    $image_manipulator->image_data_exists   = $content->image;
+                    $data_image = $image_manipulator->pathImageCreate();
+                    if ($data_image == false) {
+                        return response()->json(array("error"=>"Formato invalido, insira apenas, JPG, PNG ou SVG"));
+                    }
+                    $content->image        = $data_image->image_name;
+                    $content->url_image    = $data_image->url;
+                    if ($content->save()) {
+                        return response()->json(array("success"=>"Post inserido com sucesso!", "content"=>$content));
+                    } else {
+                        return response()->json(array("error"=>"Ocorreu uma imagem com Post, por favor tente mais tarde"));
+                    }
+                }
+                return response()->json(array("success"=>"Post inserido com sucesso!", "content"=>$content));
+            } else {
+                return response()->json(array("error"=>"Ocorreu uma falha ao inserir o Post, por favor tente mais tarde"));
+            }
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Content  $content
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Content $content)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Content  $content
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Content $content)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Content  $content
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Content $content)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Content  $content
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Content $content)
-    {
-        //
-    }
 }

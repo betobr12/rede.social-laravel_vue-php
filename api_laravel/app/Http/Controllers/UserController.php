@@ -126,7 +126,7 @@ class UserController extends Controller
             if ($user = User::where('id','=',$user->id)->first()) {
                 $user->name         = $data['name'];
                 $user->email        = $data['email'];
-                $user->description  = $data['description'] ?: "Olá meu nome é $user->name";
+                $user->description  = $data['description'] ? $data['description'] : "Olá meu nome é $user->name";
 
                 if (isset($data['imagem'])) {
                     $image_manipulator = new ImageManipulator();

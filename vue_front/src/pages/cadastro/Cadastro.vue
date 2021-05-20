@@ -43,7 +43,8 @@ export default {
         if (response.data.success) {
           // login com sucesso
           console.log('Cadastro realizado com sucesso')
-          sessionStorage.setItem('usuario',JSON.stringify(response.data))
+          this.$store.commit('setUsuario',response.data.user);
+          sessionStorage.setItem('user',JSON.stringify(response.data.user))
           this.$router.push('/')
         } else if (response.data.status == false){
           //Erro no cadastro

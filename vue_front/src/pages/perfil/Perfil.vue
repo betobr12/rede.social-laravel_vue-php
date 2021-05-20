@@ -1,7 +1,7 @@
 <template>
   <site-template>
     <span slot="menuesquerdo">
-        <img :src="usuario.user.url" class="responsive-img">
+        <img :src="user.url" class="responsive-img">
     </span>
     <span slot="principal">
         <h2>Perfil</h2>
@@ -32,7 +32,7 @@ export default {
   name: 'Perfil',
   data () {
     return {
-      usuario:false,
+      user:false,
       name:'',
       email:'',
       password:'',
@@ -43,12 +43,12 @@ export default {
   },
 
   created() {
-    let usuarioAux = sessionStorage.getItem('usuario') // para resgatar os valores da sessao criados no login.vue
+    let usuarioAux = sessionStorage.getItem('user') // para resgatar os valores da sessao criados no login.vue
     if(usuarioAux){
-      this.usuario = JSON.parse(usuarioAux);
-      this.name = this.usuario.user.name; // mostrando dados que estão na sessao
-      this.email = this.usuario.user.email;
-      this.description = this.usuario.user.description;
+      this.user = JSON.parse(usuarioAux);
+      this.name = this.user.name; // mostrando dados que estão na sessao
+      this.email = this.user.email;
+      this.description = this.user.description;
     }
   },
 
@@ -59,7 +59,7 @@ export default {
   methods: {
     sair() {
       sessionStorage.clear(); //limpar a sessão
-      this.usuario = false
+      this.user = false
     },
 
     /*
@@ -102,17 +102,16 @@ export default {
         description: this.description,
         password: this.password,
         password_confirmation: this.password_confirmation
-      },{"headers":{"authorization":"Bearer "+this.usuario.user.token}})
+      },{"headers":{"authorization":"Bearer "+this.user.token}})
       .then(response => {
           //console.log(response)
           if (response.data.success){
             // login com sucesso
-            console.log(response.data);
-
-            this.usuario = response.data;
-            sessionStorage.setItem('usuario',JSON.stringify(response.data))
+            console.log(response.data.user);
+            this.user = response.data.user;
+            //this.$store.commit('setUsuario',response.data.user);
+            sessionStorage.setItem('user',JSON.stringify(response.data.user))
             alert('Perfil atualizado!');
-
           } else {
             // erros de validação
             console.log('erros de validação')

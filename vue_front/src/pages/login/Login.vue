@@ -36,8 +36,9 @@ export default {
         console.log(response)
         if(response.data.success) {
           // login com sucesso
-          console.log('login com sucesso')
-          sessionStorage.setItem('usuario',JSON.stringify(response.data))
+          console.log('login com sucesso');
+          this.$store.commit('setUsuario',response.data.user);
+          sessionStorage.setItem('user',JSON.stringify(response.data.user));
           this.$router.push('/')
         } else if (response.data.status == false) {
           //login não existe
