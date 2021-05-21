@@ -15,17 +15,18 @@
     </span>
 
     <span slot="principal">
-      <publicar-conteudo-vue :user="user" /> <!-- Passando usuario por um propos para o publicar-->
-      <card-conteudo-vue
-        perfil="http://materializecss.com/images/yuna.jpg"
-        nome="Maria Silva"
-        data="13/01/18 13:30">
+      <publicar-conteudo-vue />
+      <card-conteudo-vue v-for="item in listaConteudos" :key="item.id"
+        :perfil="item.user.url"
+        :nome="item.user.name"
+        :data="item.created_at">
           <card-detalhe-vue
-            img="http://materializecss.com/images/sample-1.jpg"
-            titulo=""
-            txt="I am a very simple card. I am good at containing small bits of information.
-            I am convenient because I require little markup to use effectively."  />
+            :img="item.url_image"
+            :titulo="item.title"
+            :txt="item.description" />
       </card-conteudo-vue>
+
+
     </span>
 
 
@@ -44,16 +45,24 @@ export default {
   data () {
     return {
       user: false,
-
     }
   },
   created() {
-    let usuarioAux = sessionStorage.getItem('user') // para resgatar os valores da sessao criados no login.vue
+    let usuarioAux = this.$store.getters.getUsuario; // para resgatar os valores da sessao criados no login.vue
     if(usuarioAux){
-      this.user = JSON.parse(usuarioAux);
-      this.name = this.user.name; // mostrando dados que estão na sessao
-      this.url = this.user.url; // mostrando dados que estão na sessao
-      this.description = this.user.description;
+      this.user = this.$store.getters.getUsuario;
+      this.$http.get(this.$urlAPI+'content',{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
+      .then(response => {
+        console.log(response);
+        if (response.data.content)
+        {
+          this.$store.commit('setContentsTimeLine',response.data.content.data);
+        }
+      })
+      .catch(e => {
+        console.log(e)
+        alert('Erro! Tente novamente mais tarde!')
+      })
     }
   },
   components:{
@@ -62,6 +71,11 @@ export default {
     PublicarConteudoVue,
     SiteTemplate,
     GridVue
+  },
+  computed: {
+    listaConteudos() {
+     return this.$store.getters.getContentsTimeLine;
+    }
   }
 }
 </script>

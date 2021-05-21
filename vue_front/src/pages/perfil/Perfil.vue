@@ -43,9 +43,10 @@ export default {
   },
 
   created() {
-    let usuarioAux = sessionStorage.getItem('user') // para resgatar os valores da sessao criados no login.vue
+    // para resgatar os valores da sessao criados no login.vue
+    let usuarioAux = this.$store.getters.getUsuario; // para resgatar os valores da sessao criados no login.vue
     if(usuarioAux){
-      this.user = JSON.parse(usuarioAux);
+      this.user = this.$store.getters.getUsuario;
       this.name = this.user.name; // mostrando dados que estão na sessao
       this.email = this.user.email;
       this.description = this.user.description;
@@ -63,7 +64,7 @@ export default {
     },
 
     /*
-        salvaImagem(e) {
+      salvaImagem(e) {
      // var preview = document.querySelector('img');
       var file    = document.querySelector('input[type=file]').files[0];
       var reader  = new FileReader();
@@ -102,14 +103,14 @@ export default {
         description: this.description,
         password: this.password,
         password_confirmation: this.password_confirmation
-      },{"headers":{"authorization":"Bearer "+this.user.token}})
+      },{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
       .then(response => {
           //console.log(response)
           if (response.data.success){
             // login com sucesso
             console.log(response.data.user);
             this.user = response.data.user;
-            //this.$store.commit('setUsuario',response.data.user);
+            this.$store.commit('setUsuario',response.data.user);
             sessionStorage.setItem('user',JSON.stringify(response.data.user))
             alert('Perfil atualizado!');
           } else {

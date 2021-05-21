@@ -14,6 +14,7 @@ class Content extends Model
     protected $table = 'contents';
     public $timestamps = true;
     protected $fillable = [
+        'id',
         'user_id',
         'title',
         'description',

@@ -64,6 +64,7 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::put('/profile' , [UserController::class, 'update']);
     Route::prefix('content')->group(function() {
         Route::post('/'     , [ContentController::class, 'new']);
+        Route::get('/'      , [ContentController::class, 'get']);
     });
 });
 

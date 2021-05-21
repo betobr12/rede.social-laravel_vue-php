@@ -75,7 +75,7 @@ class UserController extends Controller
 
                 return response()->json(array("success"=>"Usuario logado com sucesso","user"=>$user));
             }else{
-                return response()->json(array("error"=>"Erro ao autenticar"));
+                return response()->json(array("error"=>"Usuario ou senha invalido"));
             }
         }
     }
@@ -158,7 +158,6 @@ class UserController extends Controller
             }
         }
         return response()->json(array("success"=>"Usuario alterado com sucesso","user"=>$user));
-
     }
 
 }

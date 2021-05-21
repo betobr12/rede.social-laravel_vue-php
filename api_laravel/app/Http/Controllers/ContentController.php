@@ -10,23 +10,29 @@ use Illuminate\Support\Facades\Validator;
 
 class ContentController extends Controller
 {
+
+    public function get(Request $request)
+    {
+        $content = Content::with('user')->orderBy('created_at','DESC')->paginate(5);
+
+        return response()->json(array('content' => $content));
+    }
+
     protected function new(Request $request)
     {
         $user = $request->user();
         $data = $request->all();
 
-        $validator = Validator::make($data, [
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
-
-        ],[
-            'title.required'         => 'Titulo obrigatorio',
-            'description.required'          => 'Texto obrigatorio',
-
-           ]
+        $validator = Validator::make($data,
+            [
+                'title' => ['required', 'string', 'max:255'],
+                'description' => ['required', 'string'],
+            ],
+            [
+                'title.required'         => 'Titulo obrigatorio',
+                'description.required'   => 'Texto obrigatorio',
+            ]
         );
-
-        //return response()->json(array("success"=>"Post inserido com sucesso!", "content"=>$data['image']));
 
         if ($validator->fails()) {
             return response()->json(array("error"=>$validator->errors()));
@@ -36,7 +42,7 @@ class ContentController extends Controller
                 'title'         => $data['title'],
                 'description'   => $data['description'],
                 'link'          => $data['link'],
-                'created_at'    =>\Carbon\Carbon::now()->format('Y-m-d'),
+                'created_at'    =>\Carbon\Carbon::now()->format('Y-m-d H:i:s'),
             ])) {
                 if (isset($data['image'])) {
                     $image_manipulator = new ImageManipulator();
@@ -53,7 +59,12 @@ class ContentController extends Controller
                     $content->image        = $data_image->image_name;
                     $content->url_image    = $data_image->url;
                     if ($content->save()) {
-                        return response()->json(array("success"=>"Post inserido com sucesso!", "content"=>$content));
+
+
+                        $contents = Content::with('user')->orderBy('created_at','DESC')->paginate(5);//mudar
+
+
+                        return response()->json(array("success"=>"Post inserido com sucesso!", "content"=>$contents));
                     } else {
                         return response()->json(array("error"=>"Ocorreu uma imagem com Post, por favor tente mais tarde"));
                     }
@@ -64,5 +75,4 @@ class ContentController extends Controller
             }
         }
     }
-
 }

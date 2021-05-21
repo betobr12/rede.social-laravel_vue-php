@@ -33,7 +33,6 @@ export default {
         password:this.password
       })
       .then(response => {
-        console.log(response)
         if(response.data.success) {
           // login com sucesso
           console.log('login com sucesso');

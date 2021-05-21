@@ -4,7 +4,6 @@
       <input type="text" v-model="content.title">
       <textarea v-if="content.title" v-model="content.description" class="materialize-textarea" placeholder="Conteudo"></textarea>
       <input type="text" v-if="content.title && content.description" placeholder="Link" v-model="content.link">
-     <!-- <input type="text" v-if="content.title && content.description" placeholder="Url da Imagem" v-model="content.image"> -->
         <div class="file-field input-field" v-if="content.title && content.description">
           <div class="btn">
             <span>Imagem</span>
@@ -27,15 +26,10 @@ import GridVue from '@/components/layouts/GridVue'
 
 export default {
   name: 'PublicarConteudoVue',
-  props:['usuario'],
+  props:[],
   data () {
     return {
-      content: {
-        title: '',
-        description: '',
-        link: '',
-        image: '',
-      }
+      content: { title: '', description: '', link: '', image: '' }
     }
   },
   components: {
@@ -61,11 +55,13 @@ export default {
         link: this.content.link,
         image: this.content.image,
       },{"headers": {
-        "authorization":"Bearer "+this.usuario.user.token//recuperar token do usuario
+        "authorization":"Bearer "+this.$store.getters.getToken//recuperar token do usuario
         }
       }).then(response => {
         if (response.data.success) {
           console.log(response.data.content);
+          this.content = {title: '', description: '', link: '', image: '' }; //limpa as variaveis
+          this.$store.commit('setContentsTimeLine',response.data.content.data)
           alert(response.data.success);
         } else {
           alert(response.data.error);
@@ -76,7 +72,6 @@ export default {
         }
       )
     },
-
   },
 }
 </script>

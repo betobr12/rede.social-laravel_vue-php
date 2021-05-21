@@ -13,7 +13,8 @@ Vue.prototype.$urlAPI = 'http://127.0.0.1:8000/api/'
 
 var store = { //vuex
   state: {
-    user: sessionStorage.getItem('user') ? this.user = JSON.parse(sessionStorage.getItem('user')) : null
+    user: sessionStorage.getItem('user') ? this.user = JSON.parse(sessionStorage.getItem('user')) : null,
+    contentsTimeLine: null,
   },
   getters: { //receber listas e valores
 
@@ -22,11 +23,17 @@ var store = { //vuex
     },
     getToken: state => {
       return state.user.token;
+    },
+    getContentsTimeLine: state => {
+      return state.contentsTimeLine;
     }
   },
   mutations: { //efetuar moodificações
     setUsuario(state,n) {
       state.user = n;
+    },
+    setContentsTimeLine(state,n) {
+      state.contentsTimeLine = n;
     }
 
   }
