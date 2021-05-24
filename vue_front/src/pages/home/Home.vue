@@ -21,9 +21,10 @@
         :nome="item.user.name"
         :data="item.created_at">
           <card-detalhe-vue
-            :img="item.url_image"
-            :titulo="item.title"
-            :txt="item.description" />
+            :url_image="item.url_image"
+            :title="item.title"
+            :description="item.description"
+            :link="item.link" />
       </card-conteudo-vue>
 
 

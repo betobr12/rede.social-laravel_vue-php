@@ -43,6 +43,7 @@ class ContentController extends Controller
                 'description'   => $data['description'],
                 'link'          => $data['link'],
                 'created_at'    =>\Carbon\Carbon::now()->format('Y-m-d H:i:s'),
+
             ])) {
                 if (isset($data['image'])) {
                     $image_manipulator = new ImageManipulator();
@@ -56,20 +57,21 @@ class ContentController extends Controller
                     if ($data_image == false) {
                         return response()->json(array("error"=>"Formato invalido, insira apenas, JPG, PNG ou SVG"));
                     }
-                    $content->image        = $data_image->image_name;
-                    $content->url_image    = $data_image->url;
+                    $content->image        = $data_image->image_name ? $data_image->image_name : null;
+                    $content->url_image    = $data_image->url ? $data_image->url : null;
                     if ($content->save()) {
 
-
                         $contents = Content::with('user')->orderBy('created_at','DESC')->paginate(5);//mudar
-
 
                         return response()->json(array("success"=>"Post inserido com sucesso!", "content"=>$contents));
                     } else {
                         return response()->json(array("error"=>"Ocorreu uma imagem com Post, por favor tente mais tarde"));
                     }
                 }
-                return response()->json(array("success"=>"Post inserido com sucesso!", "content"=>$content));
+
+                $contents = Content::with('user')->orderBy('created_at','DESC')->paginate(5);//mudar
+
+                return response()->json(array("success"=>"Post inserido com sucesso!", "content"=>$contents));
             } else {
                 return response()->json(array("error"=>"Ocorreu uma falha ao inserir o Post, por favor tente mais tarde"));
             }

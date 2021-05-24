@@ -29,7 +29,13 @@ export default {
   props:[],
   data () {
     return {
-      content: { title: '', description: '', link: '', image: '' }
+      content: {
+        title: '',
+        description: '',
+        link: '',
+        image: null,
+        url_image: null,
+      }
     }
   },
   components: {

@@ -113,6 +113,7 @@ export default {
             this.$store.commit('setUsuario',response.data.user);
             sessionStorage.setItem('user',JSON.stringify(response.data.user))
             alert('Perfil atualizado!');
+
           } else {
             // erros de validação
             console.log('erros de validação')
