@@ -57,8 +57,8 @@ class ContentController extends Controller
                     if ($data_image == false) {
                         return response()->json(array("error"=>"Formato invalido, insira apenas, JPG, PNG ou SVG"));
                     }
-                    $content->image        = $data_image->image_name ? $data_image->image_name : null;
-                    $content->url_image    = $data_image->url ? $data_image->url : null;
+                    $content->image        = $data_image->image_name;
+                    $content->url_image    = $data_image->url;
                     if ($content->save()) {
 
                         $contents = Content::with('user')->orderBy('created_at','DESC')->paginate(5);//mudar
