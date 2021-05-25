@@ -6,14 +6,26 @@ use App\Libraries\ImageManipulator;
 use App\Models\Content;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class ContentController extends Controller
 {
 
-    public function get(Request $request)
+    public function get()
     {
         $content = Content::with('user')->orderBy('created_at','DESC')->paginate(5);
+        $user = Auth::user();
+        foreach ($content as $key => $cont) {
+            $cont->total_likes = $cont->likes()->count();
+            $liked = $user->likes()->find($cont->id);
+
+            if ($liked) {
+                $cont->liked_content = true;
+            } else {
+                $cont->liked_content = false;
+            }
+        }
 
         return response()->json(array('content' => $content));
     }

@@ -5,11 +5,11 @@
       <div class="card-content">
         <div class="row valign-wrapper">
           <grid-vue tamanho="1">
-            <img :src="perfil" :alt="nome" class="circle responsive-img"> <!-- notice the "circle" class -->
+            <img :src="profile" :alt="name" class="circle responsive-img"> <!-- notice the "circle" class -->
           </grid-vue>
           <grid-vue tamanho="11">
             <span class="black-text">
-              <strong>{{nome}}</strong> - <small>{{data}}</small>
+              <strong>{{name}}</strong> - <small>{{data}}</small>
 
             </span>
           </grid-vue>
@@ -20,8 +20,14 @@
       </div>
       <div class="card-action">
         <p>
-          <i class="material-icons">favorite_border</i>
-          <i class="material-icons">insert_comment</i>
+          <a style="cursor:pointer"  @click="likeContent(content_id)">
+            <i class="material-icons">{{ like }}</i> {{ totalLikes }}
+          </a>
+
+          <a style="cursor:pointer" @click="openComment(comment_id)">
+            <i class="material-icons">insert_comment</i> 22
+          </a>
+
         </p>
       </div>
     </div>
@@ -35,15 +41,43 @@ import GridVue from '@/components/layouts/GridVue'
 
 export default {
   name: 'CardConteudoVue',
-  props:['perfil','nome','data'],
+  props:['content_id','profile','name','data','total_likes','liked_content'],
   data () {
     return {
+      like: this.liked_content ? 'favorite' : 'favorite_border',
+      totalLikes: this.total_likes,
 
     }
   },
   components:{
     GridVue
-  }
+  },
+  methods: {
+    likeContent(content_id) {
+        this.$http.put(this.$urlAPI+'like/'+content_id,
+        {},
+        {"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
+        .then(response => {
+          if (response.status) {
+            this.totalLikes = response.data.likes;
+            this.$store.commit('setContentsTimeLine',response.data.content);
+
+          if (this.like == 'favorite_border') {
+            this.like = 'favorite';
+          } else {
+            this.like = 'favorite_border';
+          }
+          } else {
+            alert(response.data.error);
+          }
+        }).catch(e => {
+        console.log(e)
+        alert('Erro! Tente novamente mais tarde!')
+        }
+      );
+    }
+
+  },
 }
 </script>
 

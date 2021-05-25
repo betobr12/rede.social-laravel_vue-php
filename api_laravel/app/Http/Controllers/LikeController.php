@@ -2,84 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Content;
 use App\Models\Like;
 use Illuminate\Http\Request;
 
 class LikeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    protected function like(Request $request, $id)
     {
-        //
-    }
+        $content = Content::find($id);
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+       // $contents       = new  Content();
+       // $content_list   = $contents->getContents(); //paginate não foi definido, pode causar problemas no futuro
+        $contents       = new  ContentController();
+        $content_list   = $contents->get();
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        if ($content) {
+            $user = $request->user();
+            $user->likes()->toggle($content->id); //adiciona ou remove amigo pelo id
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Like  $like
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Like $like)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Like  $like
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Like $like)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Like  $like
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Like $like)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Like  $like
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Like $like)
-    {
-        //
+            //$content->likes->count();
+            return response()->json(array("status"=>true,"content"=>$content_list, "likes"=> $content->likes()->count()));
+        } else {
+            return response()->json(array("error" => false));
+        }
     }
 }

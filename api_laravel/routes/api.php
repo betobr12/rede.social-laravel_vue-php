@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ContentController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\UserController;
 
 use Illuminate\Http\Request;
@@ -33,9 +34,7 @@ use Illuminate\Support\Facades\Route;
     */
 
     //adicionar curtidas
-   /* $content = App\Models\Content::find(1);
-    $user->likes()->toggle($content->id); //adiciona ou remove amigo pelo id
-    return $content->likes->count();
+   /*
     */
 //adicionar comentarios
 /*
@@ -65,6 +64,9 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::prefix('content')->group(function() {
         Route::post('/'     , [ContentController::class, 'new']);
         Route::get('/'      , [ContentController::class, 'get']);
+    });
+    Route::prefix('like')->group(function($id) {
+        Route::put('/{id}'     , [LikeController::class, 'like']);
     });
 });
 

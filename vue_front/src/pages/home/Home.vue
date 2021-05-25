@@ -17,8 +17,11 @@
     <span slot="principal">
       <publicar-conteudo-vue />
       <card-conteudo-vue v-for="item in listaConteudos" :key="item.id"
-        :perfil="item.user.url"
-        :nome="item.user.name"
+        :content_id="item.id"
+        :liked_content="item.liked_content"
+        :total_likes="item.total_likes"
+        :profile="item.user.url"
+        :name="item.user.name"
         :data="item.created_at">
           <card-detalhe-vue
             :url_image="item.url_image"
