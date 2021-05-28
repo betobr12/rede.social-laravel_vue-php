@@ -10,11 +10,9 @@
           <grid-vue tamanho="11">
             <span class="black-text">
               <strong>{{name}}</strong> - <small>{{data}}</small>
-
             </span>
           </grid-vue>
         </div>
-
         <slot />
 
       </div>
@@ -24,10 +22,25 @@
             <i class="material-icons">{{ like }}</i> {{ totalLikes }}
           </a>
 
-          <a style="cursor:pointer" @click="openComment(comment_id)">
-            <i class="material-icons">insert_comment</i> 22
+          <a style="cursor:pointer" @click="openComment()">
+            <i class="material-icons">insert_comment</i> {{ comments.length }}
           </a>
+        </p>
 
+        <p v-if="showComment" class="right-align">
+          <input type="text" v-model="descriptionComment" placeholder="Comentar">
+          <button v-if="descriptionComment" @click="comment(content_id)" class="btn waves-effect waves-light orange"><i class="material-icons">send</i></button>
+        </p>
+        <p v-if="showComment">
+          <ul class="collection">
+            <li class="collection-item avatar" v-for="item in comments" :key="item.comment_id">
+              <img :src="item.user_comment_url" alt="" class="circle">
+              <span class="titles">{{ item.user_comment_name }} <small>- {{ item.created_at }}</small></span>
+              <p>
+                {{ item.description }}
+              </p>
+            </li>
+          </ul>
         </p>
       </div>
     </div>
@@ -41,11 +54,13 @@ import GridVue from '@/components/layouts/GridVue'
 
 export default {
   name: 'CardConteudoVue',
-  props:['content_id','profile','name','data','total_likes','liked_content'],
+  props:['content_id','profile','name','data','total_likes','liked_content','comments'],
   data () {
     return {
       like: this.liked_content ? 'favorite' : 'favorite_border',
       totalLikes: this.total_likes,
+      showComment: false,
+      descriptionComment: '',
 
     }
   },
@@ -62,6 +77,7 @@ export default {
             this.totalLikes = response.data.likes;
             this.$store.commit('setContentsTimeLine',response.data.content);
 
+
           if (this.like == 'favorite_border') {
             this.like = 'favorite';
           } else {
@@ -75,8 +91,31 @@ export default {
         alert('Erro! Tente novamente mais tarde!')
         }
       );
-    }
+    },
+    openComment() {
+      this.showComment = !this.showComment;
+    },
 
+    comment(comment_id) {
+      if (!this.descriptionComment) {
+        return;
+      }
+      this.$http.put(this.$urlAPI+'comment/'+comment_id,{description: this.descriptionComment},
+
+      {"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
+      .then(response => {
+        if (response.status) {
+          alert('Comentario inserido com sucesso');
+          this.descriptionComment = "";
+          this.$store.commit('setContentsTimeLine',response.data.content);
+        } else {
+          alert(response.data.error);
+        }
+      }).catch(e => {
+      console.log(e)
+      alert('Erro! Tente novamente mais tarde!')
+      });
+    },
   },
 }
 </script>

@@ -20,6 +20,7 @@
         :content_id="item.id"
         :liked_content="item.liked_content"
         :total_likes="item.total_likes"
+        :comments="item.comments"
         :profile="item.user.url"
         :name="item.user.name"
         :data="item.created_at">
@@ -29,11 +30,7 @@
             :description="item.description"
             :link="item.link" />
       </card-conteudo-vue>
-
-
     </span>
-
-
   </site-template>
 </template>
 
@@ -57,10 +54,10 @@ export default {
       this.user = this.$store.getters.getUsuario;
       this.$http.get(this.$urlAPI+'content',{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
       .then(response => {
-        console.log(response);
+        console.log(response.data.content);
         if (response.data.content)
         {
-          this.$store.commit('setContentsTimeLine',response.data.content.data);
+          this.$store.commit('setContentsTimeLine',response.data.content);
         }
       })
       .catch(e => {

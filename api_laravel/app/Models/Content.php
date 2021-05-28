@@ -27,6 +27,7 @@ class Content extends Model
         'deleted_at',
     ];
 
+
     public function comments()
     {
         return $this->hasMany(Comment::class);
@@ -42,11 +43,13 @@ class Content extends Model
       return $this->belongsToMany(User::class, 'likes', 'content_id', 'user_id');
     }
 
+
     public function getContents()
     {
         return DB::table('contents as conte')
-        ->leftJoin('users as user', 'user.id',          '=','conte.user_id')
-        ->leftJoin('likes as like', 'like.content_id',  '=','conte.id')
+        ->leftJoin('users   as user',   'user.id',         '=','conte.user_id')
+        ->leftJoin('likes   as like',   'like.content_id', '=','conte.id')
+        ->leftJoin('friends as friend', 'friend.user_id',  '=','user.id')
         ->selectRaw("
             conte.id,
             conte.user_id,
@@ -57,11 +60,15 @@ class Content extends Model
             conte.link,
             conte.created_at,
             conte.updated_at,
-            user.name       as user_name,
-            user.url        as user_url,
-            user.name       as user_name,
-            like.id         as like_id
+            user.id                 as  user_id,
+            user.name               as  user_name,
+            user.url                as  user_url,
+            user.name               as  user_name,
+            conte.created_at
         ")
+        ->when($this->user_id, function ($query, $user_id) {
+            return $query->where('conte.user_id', $user_id);
+        })
         ->get();
     }
 }

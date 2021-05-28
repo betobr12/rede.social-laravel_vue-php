@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ContentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\UserController;
@@ -44,12 +45,8 @@ use Illuminate\Support\Facades\Route;
         'description'  =>'Teste de comentario',
         'created_at'   =>\Carbon\Carbon::now() //date('Y-m-d')
     ]);
-    $user2->comments()->create([
-        'content_id'   =>$content->id,
-        'description'  =>'Teste de comentario do user2',
-        'created_at'   =>\Carbon\Carbon::now() //date('Y-m-d')
-    ]);
-    return $content->comments;
+
+
 
     });
 */
@@ -67,6 +64,9 @@ Route::group(['middleware' => 'auth:api'], function(){
     });
     Route::prefix('like')->group(function($id) {
         Route::put('/{id}'     , [LikeController::class, 'like']);
+    });
+    Route::prefix('comment')->group(function($id) {
+        Route::put('/{id}'     , [CommentController::class, 'comment']);
     });
 });
 

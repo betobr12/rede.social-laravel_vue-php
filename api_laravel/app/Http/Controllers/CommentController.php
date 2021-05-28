@@ -3,83 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
+use App\Models\Content;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    protected function comment(Request $request, $id)
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Comment  $comment
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Comment $comment)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Comment  $comment
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Comment $comment)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Comment  $comment
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Comment $comment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Comment  $comment
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Comment $comment)
-    {
-        //
+        $content        = Content::find($id);   //acessa um conteudo
+        if ($content) {
+            $user = $request->user();
+            $user->comments()->create([
+                'user_id'      => $user->id,
+                'content_id'   => $content->id,
+                'description'  => $request->description,
+                'created_at'   => \Carbon\Carbon::now() //date('Y-m-d')
+            ]);
+            $contents   = new  ContentController(); //objeto instanciado para trazer metodo
+            return  $contents->get(); //acessa lista de conteudo
+        } else {
+            return response()->json(array("error" => false));
+        }
     }
 }

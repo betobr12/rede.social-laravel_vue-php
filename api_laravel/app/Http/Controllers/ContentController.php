@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Libraries\ImageManipulator;
+use App\Models\Comment;
 use App\Models\Content;
+use App\Models\Like;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,11 +16,14 @@ class ContentController extends Controller
 
     public function get()
     {
+
+        /*
         $content = Content::with('user')->orderBy('created_at','DESC')->paginate(5);
         $user = Auth::user();
         foreach ($content as $key => $cont) {
-            $cont->total_likes = $cont->likes()->count();
-            $liked = $user->likes()->find($cont->id);
+            $cont->total_likes   = $cont->likes()->count();
+            $cont->comments      = $cont->comments()->with('user')->get();
+            $liked               = $user->likes()->find($cont->id);
 
             if ($liked) {
                 $cont->liked_content = true;
@@ -26,8 +31,26 @@ class ContentController extends Controller
                 $cont->liked_content = false;
             }
         }
+        */
+        $user = Auth::user();
 
-        return response()->json(array('content' => $content));
+        $content  = new Content();
+        $contents = $content->getContents();
+
+        foreach ($contents as $key => $cont) {
+            $total_likes         = Like::count_like($cont->id)[0];
+            $cont->total_likes   = $total_likes->count_like;
+            $cont->comments      = Comment::comment_get($cont->id);
+            $liked               = $user->likes()->find($cont->id);
+            $cont->user          = $user;
+
+            if ($liked) {
+                $cont->liked_content = true;
+            } else {
+                $cont->liked_content = false;
+            }
+        }
+        return array('status'=>true,'content' => $contents);
     }
 
     protected function new(Request $request)
@@ -72,18 +95,12 @@ class ContentController extends Controller
                     $content->image        = $data_image->image_name;
                     $content->url_image    = $data_image->url;
                     if ($content->save()) {
-
-                        $contents = Content::with('user')->orderBy('created_at','DESC')->paginate(5);//mudar
-
-                        return response()->json(array("success"=>"Post inserido com sucesso!", "content"=>$contents));
+                        return response()->json(array("success"=>"Post inserido com sucesso!", "content"=>$this->get()));
                     } else {
                         return response()->json(array("error"=>"Ocorreu uma imagem com Post, por favor tente mais tarde"));
                     }
                 }
-
-                $contents = Content::with('user')->orderBy('created_at','DESC')->paginate(5);//mudar
-
-                return response()->json(array("success"=>"Post inserido com sucesso!", "content"=>$contents));
+                return response()->json(array("success"=>"Post inserido com sucesso!", "content"=>$this->get()));
             } else {
                 return response()->json(array("error"=>"Ocorreu uma falha ao inserir o Post, por favor tente mais tarde"));
             }
