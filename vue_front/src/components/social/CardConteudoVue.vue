@@ -5,11 +5,15 @@
       <div class="card-content">
         <div class="row valign-wrapper">
           <grid-vue tamanho="1">
-            <img :src="profile" :alt="name" class="circle responsive-img"> <!-- notice the "circle" class -->
+            <router-link :to="'/pagina/'+user_id+'/'+$slug(name,{lower: true})">
+             <img :src="profile" :alt="name" class="circle responsive-img"> <!-- notice the "circle" class -->
+            </router-link>
           </grid-vue>
           <grid-vue tamanho="11">
             <span class="black-text">
-              <strong>{{name}}</strong> - <small>{{data}}</small>
+              <router-link :to="'/pagina/'+user_id+'/'+$slug(name,{lower: true})">
+               <strong>{{name}}</strong> - <small>{{data}}</small>
+              </router-link>
             </span>
           </grid-vue>
         </div>
@@ -23,7 +27,7 @@
           </a>
 
           <a style="cursor:pointer" @click="openComment()">
-            <i class="material-icons">insert_comment</i> {{ comments.length }}
+            <i class="material-icons">insert_comment</i> {{ listComments.length }}
           </a>
         </p>
 
@@ -54,14 +58,14 @@ import GridVue from '@/components/layouts/GridVue'
 
 export default {
   name: 'CardConteudoVue',
-  props:['content_id','profile','name','data','total_likes','liked_content','comments'],
+  props:['content_id','profile','name','data','total_likes','liked_content','comments','user_id'],
   data () {
     return {
       like: this.liked_content ? 'favorite' : 'favorite_border',
       totalLikes: this.total_likes,
       showComment: false,
       descriptionComment: '',
-
+      listComments: this.comments || []
     }
   },
   components:{
@@ -74,15 +78,15 @@ export default {
         {"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
         .then(response => {
           if (response.status) {
-            this.totalLikes = response.data.likes;
-            this.$store.commit('setContentsTimeLine',response.data.content);
+            console.log(response.data.content);
+            this.totalLikes = response.data.likes; //valor do like não atualiza corretamente
+            this.$store.commit('setContentsTimeLine',response.data.content.data);
 
-
-          if (this.like == 'favorite_border') {
-            this.like = 'favorite';
-          } else {
-            this.like = 'favorite_border';
-          }
+            if (this.like == 'favorite_border') {
+              this.like = 'favorite';
+            } else {
+              this.like = 'favorite_border';
+            }
           } else {
             alert(response.data.error);
           }
@@ -105,9 +109,10 @@ export default {
       {"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
       .then(response => {
         if (response.status) {
+          console.log(response.data.content);
           alert('Comentario inserido com sucesso');
           this.descriptionComment = "";
-          this.$store.commit('setContentsTimeLine',response.data.content);
+          this.$store.commit('setContentsTimeLine',response.data.content.data);
         } else {
           alert(response.data.error);
         }

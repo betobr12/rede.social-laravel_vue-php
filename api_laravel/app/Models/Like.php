@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 class Like extends Model
 {
     use HasFactory;
-    use SoftDeletes;
+    //use SoftDeletes;
 
     protected $table = 'likes';
     public $timestamps = true;
@@ -27,6 +27,8 @@ class Like extends Model
         return DB::table('likes')->where('content_id','=',$content_id)
         ->selectRaw('
             count(content_id) as count_like
-        ')->get();
+        ')
+        ->whereNull('deleted_at')
+        ->get();
     }
 }

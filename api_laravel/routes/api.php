@@ -58,9 +58,10 @@ Route::post('/login',    [UserController::class, 'login']);
 
 Route::group(['middleware' => 'auth:api'], function(){
     Route::put('/profile' , [UserController::class, 'update']);
-    Route::prefix('content')->group(function() {
-        Route::post('/'     , [ContentController::class, 'new']);
-        Route::get('/'      , [ContentController::class, 'get']);
+    Route::prefix('content')->group(function($id) {
+        Route::post('/'         , [ContentController::class, 'new']);
+        Route::get('/'          , [ContentController::class, 'get']);
+        Route::get('/page/{id}' , [ContentController::class, 'page']);
     });
     Route::prefix('like')->group(function($id) {
         Route::put('/{id}'     , [LikeController::class, 'like']);

@@ -65,9 +65,9 @@ export default {
         }
       }).then(response => {
         if (response.data.success) {
-          console.log(response.data.content);
+          console.log(response.data.content.data);
           this.content = {title: '', description: '', link: '', image: '' }; //limpa as variaveis
-          this.$store.commit('setContentsTimeLine',response.data.content.content)
+          this.$store.commit('setContentsTimeLine',response.data.content.content.data)
           alert(response.data.success);
         } else {
           alert(response.data.error);

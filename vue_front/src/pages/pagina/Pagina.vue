@@ -3,16 +3,17 @@
     <span slot="menuesquerdo">
       <div class="row valign-wrapper">
         <grid-vue tamanho="4">
-          <router-link :to="'/pagina/'+user.id+'/'+$slug(user.name,{lower: true})">
-           <img :src="user.url" :alt="user.name" class="circle responsive-img"> <!-- notice the "circle" class -->
+          <router-link :to="'/pagina/'+userPage.id+'/'+$slug(userPage.name,{lower: true})">
+           <img :src="userPage.url" :alt="userPage.name" class="circle responsive-img"> <!-- notice the "circle" class -->
           </router-link>
+
         </grid-vue>
         <grid-vue tamanho="8">
           <span class="black-text">
-            <router-link :to="'/pagina/'+user.id+'/'+$slug(user.name,{lower: true})">
-             <h5>{{ user.name }}</h5>
+            <router-link :to="'/pagina/'+userPage.id+'/'+$slug(userPage.name,{lower: true})">
+              <h5>{{ userPage.name }}</h5>
             </router-link>
-            {{ user.description }}
+            {{ userPage.description }}
           </span>
         </grid-vue>
       </div>
@@ -35,8 +36,8 @@
             :description="item.description"
             :link="item.link" />
       </card-conteudo-vue>
-    <button v-if="urlNextPage" @click="pageLoad()" class="btn blue">Mais... </button>
-      <!--  <div v-scroll="handleScroll"></div>-->
+     <!-- <button v-if="urlNextPage" @click="pageLoad()" class="btn blue">Mais... </button> -->
+      <div v-scroll="handleScroll"></div>
     </span>
   </site-template>
 </template>
@@ -49,16 +50,18 @@ import SiteTemplate from '@/templates/SiteTemplate'
 import GridVue from '@/components/layouts/GridVue'
 
 export default {
-  name: 'Home',
+  name: 'Pagina',
   data () {
     return {
-      user: {
+      user: false,
+      urlNextPage: null,
+      stopScroll: false,
+      userPage: {
         name: '',
         url: '',
         description: ''
-      },
-      urlNextPage: null,
-      stopScroll: false,
+      }
+
 
     }
   },
@@ -66,14 +69,14 @@ export default {
     let usuarioAux = this.$store.getters.getUsuario; // para resgatar os valores da sessao criados no login.vue
     if(usuarioAux){
       this.user = this.$store.getters.getUsuario;
-      this.$http.get(this.$urlAPI+'content',{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
+      this.$http.get(this.$urlAPI+'content/page/'+this.$route.params.id,{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
       .then(response => {
         //console.log(response.data.content);
-        if (response.data.content)
-        {
+        if (response.data.content) {
           console.log(response.data.content);
           this.$store.commit('setContentsTimeLine',response.data.content.data);
           this.urlNextPage = response.data.content.next_page_url;
+          this.userPage = response.data.data_user_page;
         }
       })
       .catch(e => {
@@ -90,8 +93,7 @@ export default {
     GridVue
   },
   methods: {
-    /*
-        handleScroll() {
+    handleScroll() {
       //console.log(document.body.clientHeight);//mostra a altura da tela
      // console.log(window.scrollY); //percorre a pagina no momento em que movimentamos
       if (this.stopScroll) {
@@ -100,13 +102,12 @@ export default {
       //this.total = window.scrollY - document.body.clientHeight;
       if (window.scrollY >= document.body.clientHeight - 949) {
         this.stopScroll = true;
-        // stopScroll evita duplicar o conteudo da pagina, a cada pagina mostrada uma nova chave é gerada,
-         //se não declaramos essa variavel, no fim da paginação gera uma duplicidade infinita --
+        /*-- stopScroll evita duplicar o conteudo da pagina, a cada pagina mostrada uma nova chave é gerada,
+         se não declaramos essa variavel, no fim da paginação gera uma duplicidade infinita --*/
         this.pageLoad();
       }
 
     },
-    */
     pageLoad() {
       if (!this.urlNextPage) {
         return;
@@ -114,7 +115,7 @@ export default {
       this.$http.get(this.urlNextPage,{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
       .then(response => {
         console.log(response.data.content);
-        if (response.data.content && this.$route.name == "Home") {
+        if (response.data.content && this.$route.name == "Pagina") {
           this.$store.commit('setPaginationContentsTimeLine',response.data.content.data);
           this.urlNextPage = response.data.content.next_page_url;
           this.stopScroll = false;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Libraries\DataIndex;
 use App\Models\Comment;
 use App\Models\Content;
 use Illuminate\Http\Request;
@@ -19,8 +20,10 @@ class CommentController extends Controller
                 'description'  => $request->description,
                 'created_at'   => \Carbon\Carbon::now() //date('Y-m-d')
             ]);
-            $contents   = new  ContentController(); //objeto instanciado para trazer metodo
-            return  $contents->get(); //acessa lista de conteudo
+
+            $content = new DataIndex();
+            $content_list = $content->getContent();
+            return array("content" => $content_list);
         } else {
             return response()->json(array("error" => false));
         }

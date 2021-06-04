@@ -48,7 +48,6 @@ class Content extends Model
     {
         return DB::table('contents as conte')
         ->leftJoin('users   as user',   'user.id',         '=','conte.user_id')
-        ->leftJoin('likes   as like',   'like.content_id', '=','conte.id')
         ->leftJoin('friends as friend', 'friend.user_id',  '=','user.id')
         ->selectRaw("
             conte.id,
@@ -66,9 +65,10 @@ class Content extends Model
             user.name               as  user_name,
             conte.created_at
         ")
+        ->orderBy('created_at','DESC')
         ->when($this->user_id, function ($query, $user_id) {
-            return $query->where('conte.user_id', $user_id);
+            return $query->where('conte.user_id','=',$user_id);
         })
-        ->get();
+        ->paginate(5);
     }
 }

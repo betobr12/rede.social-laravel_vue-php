@@ -48,6 +48,7 @@ class Comment extends Model
             user.name   as user_comment_name,
             user.url    as user_comment_url
         ')
+        ->orderBy('created_at','DESC')
         ->where('comment.content_id','=',$content_id)
         ->get();
     }

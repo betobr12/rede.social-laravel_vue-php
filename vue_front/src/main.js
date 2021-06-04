@@ -5,11 +5,13 @@ import App from './App'
 import router from './router'
 import axios from 'axios' // usado para trazer os dados da api, foi colocado aqui afim de criar uma constante e utiliza -lo em todas as paginas
 import Vuex from 'vuex'
+import slug from 'slug'
 
 Vue.use(Vuex)
 Vue.config.productionTip = false
 Vue.prototype.$http = axios
 Vue.prototype.$urlAPI = 'http://127.0.0.1:8000/api/'
+Vue.prototype.$slug = slug
 
 var store = { //vuex
   state: {
@@ -34,11 +36,30 @@ var store = { //vuex
     },
     setContentsTimeLine(state,n) {
       state.contentsTimeLine = n;
-    }
+    },
+    setCountLike(state,total_like) {
+      state.contentsTimeLine = total_like;
+    },
+    setPaginationContentsTimeLine(state,list) {
+      for (let item of list) {
+        state.contentsTimeLine.push(item)
+      }
+    },
 
   }
 
-}
+};
+
+Vue.directive('scroll', {
+  inserted: function (el, binding) {
+    let f = function (evt) {
+      if (binding.value(evt, el)) {
+        window.removeEventListener('scroll', f)
+      }
+    }
+    window.addEventListener('scroll', f)
+  }
+})
 
 /* eslint-disable no-new */
 new Vue({

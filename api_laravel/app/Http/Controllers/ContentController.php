@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Libraries\DataIndex;
 use App\Libraries\ImageManipulator;
-use App\Models\Comment;
 use App\Models\Content;
-use App\Models\Like;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,41 +15,26 @@ class ContentController extends Controller
 
     public function get()
     {
+        $content = new DataIndex();
+        $content_list = $content->getContent();
+        return array("content" => $content_list);
+    }
 
-        /*
-        $content = Content::with('user')->orderBy('created_at','DESC')->paginate(5);
-        $user = Auth::user();
-        foreach ($content as $key => $cont) {
-            $cont->total_likes   = $cont->likes()->count();
-            $cont->comments      = $cont->comments()->with('user')->get();
-            $liked               = $user->likes()->find($cont->id);
+    public function page($id)
+    {
+        $user_page = User::find($id);
 
-            if ($liked) {
-                $cont->liked_content = true;
-            } else {
-                $cont->liked_content = false;
-            }
+        if  ($user_page) {
+            Auth::user();
+            $content          = new DataIndex();
+            $content->user_id = $user_page->id;
+            $content_list     = $content->getContent();
+            return array("content" => $content_list, "data_user_page"=>$user_page);
+        } else {
+            return response()->json(array("error"=>"Falha ao encontrar o usuario, tente mais tarde"));
         }
-        */
-        $user = Auth::user();
 
-        $content  = new Content();
-        $contents = $content->getContents();
 
-        foreach ($contents as $key => $cont) {
-            $total_likes         = Like::count_like($cont->id)[0];
-            $cont->total_likes   = $total_likes->count_like;
-            $cont->comments      = Comment::comment_get($cont->id);
-            $liked               = $user->likes()->find($cont->id);
-            $cont->user          = $user;
-
-            if ($liked) {
-                $cont->liked_content = true;
-            } else {
-                $cont->liked_content = false;
-            }
-        }
-        return array('status'=>true,'content' => $contents);
     }
 
     protected function new(Request $request)
