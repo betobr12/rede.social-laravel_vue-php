@@ -14,8 +14,14 @@ class LikeController extends Controller
         $user           = $request->user();
         $contents       = new DataIndex();
 
+        
         $content = Content::find($id);
         $like_count = 0;
+
+        //$page_data = (object) $content->getContents();
+
+
+       // return response()->json($content->paginate(5));
 
         if ($like = Like::where('content_id','=',$content->id)->where('user_id','=',$user->id)->whereNull('deleted_at')->first()) {
             $like->delete();

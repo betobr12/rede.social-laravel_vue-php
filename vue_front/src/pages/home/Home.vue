@@ -22,6 +22,7 @@
       <publicar-conteudo-vue />
       <card-conteudo-vue v-for="item in listaConteudos" :key="item.id"
         :content_id="item.id"
+        :current_page="current_page"
         :liked_content="item.liked_content"
         :total_likes="item.total_likes"
         :comments="item.comments"
@@ -35,8 +36,8 @@
             :description="item.description"
             :link="item.link" />
       </card-conteudo-vue>
-    <button v-if="urlNextPage" @click="pageLoad()" class="btn blue">Mais... </button>
-      <!--  <div v-scroll="handleScroll"></div>-->
+     <button v-if="urlNextPage" @click="pageLoad()" class="btn blue">Mais... </button>
+        <!--<div v-scroll="handleScroll"></div>-->
     </span>
   </site-template>
 </template>
@@ -55,7 +56,7 @@ export default {
       user: {
         name: '',
         url: '',
-        description: ''
+        description: '',
       },
       urlNextPage: null,
       stopScroll: false,
@@ -68,7 +69,8 @@ export default {
       this.user = this.$store.getters.getUsuario;
       this.$http.get(this.$urlAPI+'content',{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
       .then(response => {
-        //console.log(response.data.content);
+
+        this.current_page = response.data.content.current_page ?response.data.content.current_page : 1 ; //passa o numero da pagina atual via props
         if (response.data.content)
         {
           console.log(response.data.content);
@@ -90,8 +92,8 @@ export default {
     GridVue
   },
   methods: {
-    /*
-        handleScroll() {
+
+  /*  handleScroll() {
       //console.log(document.body.clientHeight);//mostra a altura da tela
      // console.log(window.scrollY); //percorre a pagina no momento em que movimentamos
       if (this.stopScroll) {
@@ -114,6 +116,7 @@ export default {
       this.$http.get(this.urlNextPage,{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
       .then(response => {
         console.log(response.data.content);
+        this.current_page = response.data.content.current_page; //passa o numero da pagina atual via props
         if (response.data.content && this.$route.name == "Home") {
           this.$store.commit('setPaginationContentsTimeLine',response.data.content.data);
           this.urlNextPage = response.data.content.next_page_url;

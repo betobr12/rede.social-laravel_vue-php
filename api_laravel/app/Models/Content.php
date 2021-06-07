@@ -64,6 +64,7 @@ class Content extends Model
             user.url                as  user_url,
             user.name               as  user_name,
             conte.created_at
+            
         ")
         ->orderBy('created_at','DESC')
         ->when($this->user_id, function ($query, $user_id) {
