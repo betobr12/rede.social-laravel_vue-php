@@ -5,6 +5,7 @@ import Login from '@/pages/login/Login'
 import Cadastro from '@/pages/cadastro/Cadastro'
 import Perfil from '@/pages/perfil/Perfil'
 import Pagina from '@/pages/pagina/Pagina'
+import Post from '@/pages/post/Post'
 
 Vue.use(Router)
 
@@ -20,6 +21,11 @@ export default new Router({
       path: '/pagina/:id/:name?',
       name: 'Pagina',
       component: Pagina
+    },
+    {
+      path: '/post/:id?',
+      name: 'Post',
+      component: Post
     },
     {
       path: '/login',

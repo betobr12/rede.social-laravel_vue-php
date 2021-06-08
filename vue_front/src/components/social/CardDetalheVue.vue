@@ -3,7 +3,7 @@
    <div v-if="url_image && url_image != '#'" class="card-image">
       <a v-if="url_image && url_image != '#'" :href="url_image" target="_blank">
         <img :src="url_image">
-        <span class="card-title">{{title || ''}}</span>
+        <router-link :to="'/post/'+content_id"><span class="card-title">{{title || ''}}</span></router-link>
       </a>
 
       <span v-if="!url_image || url_image == '#'">
@@ -22,7 +22,7 @@
   </span>
 </template>
 <script>
-export default {name:'CardDetalheVue',props:['url_image','title','description','link']
+export default {name:'CardDetalheVue',props:['content_id','url_image','title','description','link']
   }
 </script>
 

@@ -22,7 +22,7 @@
       </div>
       <div class="card-action">
         <p>
-          <a style="cursor:pointer"  @click="likeContent(content_id,current_page)">
+          <a style="cursor:pointer"  @click="likeContent(content_id,/*current_page*/)">
             <i class="material-icons">{{ like }}</i> {{ totalLikes }}
           </a>
 
@@ -58,7 +58,7 @@ import GridVue from '@/components/layouts/GridVue'
 
 export default {
   name: 'CardConteudoVue',
-  props:['content_id','current_page','profile','name','data','total_likes','liked_content','comments','user_id'],
+  props:['data_index','content_id','current_page','profile','name','data','total_likes','liked_content','comments','user_id'],
   data () {
     return {
       like: this.liked_content ? 'favorite' : 'favorite_border',
@@ -73,15 +73,14 @@ export default {
     GridVue
   },
   methods: {
-    likeContent(content_id, current_page) {
-        //this.$http.put(this.$urlAPI+'like/'+content_id,
-
-        this.$http.put(this.$urlAPI+'like/'+content_id+'?page='+current_page,
+    likeContent(content_id, /*current_page*/) {
+         this.$http.put(this.$urlAPI+'like/'+content_id,
+        //this.$http.put(this.$urlAPI+'like/'+content_id+'?page='+current_page,
         {},
         {"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
         .then(response => {
           if (response.status) {
-            console.log(current_page);
+            //console.log(current_page);
 
             this.totalLikes = response.data.likes; //valor do like não atualiza corretamente
             console.log(response.data.content);

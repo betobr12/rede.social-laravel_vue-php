@@ -17,12 +17,12 @@
         </grid-vue>
       </div>
     </span>
-
+    //--teste = :current_page="current_page"
     <span slot="principal">
       <publicar-conteudo-vue />
       <card-conteudo-vue v-for="item in listaConteudos" :key="item.id"
         :content_id="item.id"
-        :current_page="current_page"
+
         :liked_content="item.liked_content"
         :total_likes="item.total_likes"
         :comments="item.comments"
@@ -32,6 +32,7 @@
         :data="item.created_at">
           <card-detalhe-vue
             :url_image="item.url_image"
+            :content_id="item.id"
             :title="item.title"
             :description="item.description"
             :link="item.link" />
@@ -65,12 +66,14 @@ export default {
   },
   created() {
     let usuarioAux = this.$store.getters.getUsuario; // para resgatar os valores da sessao criados no login.vue
+
     if(usuarioAux){
       this.user = this.$store.getters.getUsuario;
       this.$http.get(this.$urlAPI+'content',{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
       .then(response => {
 
-        this.current_page = response.data.content.current_page ?response.data.content.current_page : 1 ; //passa o numero da pagina atual via props
+        //this.current_page = response.data.content.current_page ?response.data.content.current_page : 1 ; //passa o numero da pagina atual via props
+
         if (response.data.content)
         {
           console.log(response.data.content);
@@ -115,9 +118,12 @@ export default {
       }
       this.$http.get(this.urlNextPage,{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
       .then(response => {
-        console.log(response.data.content);
-        this.current_page = response.data.content.current_page; //passa o numero da pagina atual via props
+       console.log(response.data.content);
+
+       // this.current_page = response.data.content.current_page; //passa o numero da pagina atual via props
+
         if (response.data.content && this.$route.name == "Home") {
+
           this.$store.commit('setPaginationContentsTimeLine',response.data.content.data);
           this.urlNextPage = response.data.content.next_page_url;
           this.stopScroll = false;
