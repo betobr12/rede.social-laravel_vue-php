@@ -74,7 +74,7 @@ export default {
   },
   methods: {
     likeContent(content_id, /*current_page*/) {
-         this.$http.put(this.$urlAPI+'like/'+content_id,
+        this.$http.put(this.$urlAPI+'like/'+content_id,
         //this.$http.put(this.$urlAPI+'like/'+content_id+'?page='+current_page,
         {},
         {"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})

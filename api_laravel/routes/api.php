@@ -24,15 +24,7 @@ use Illuminate\Support\Facades\Route;
     $user = App\Models\User::find(1);
     $user2 = App\Models\User::find(3);//para adicionar aos amigos
 
-    //criar conteudo
-    /*
 
-    */
-    /*//adicionar amigo
-
-        //$user->friends()->toggle($user2->id); //adiciona ou remove amigo pelo id
-        //return $user->friends;
-    */
 
     //adicionar curtidas
    /*
@@ -66,6 +58,11 @@ Route::group(['middleware' => 'auth:api'], function(){
     });
     Route::prefix('comment')->group(function($id) {
         Route::put('/{id}'     , [CommentController::class, 'comment']);
+    });
+    Route::prefix('user')->group(function($id) {
+        Route::post('/friend'               , [UserController::class, 'friend']);
+        Route::get('/list_friend'           , [UserController::class, 'list_friend']);
+        Route::get('/list_friend_page/{id}' , [UserController::class, 'list_friend_page']);
     });
 });
 

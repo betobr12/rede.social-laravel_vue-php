@@ -18,6 +18,13 @@
       </div>
     </span>
     //--teste = :current_page="current_page"
+    <span slot="menuesquerdoamigos">
+      <span><i class="medium material-icons">people</i></span>
+
+      <li v-for="item in friends" :key="item.id" >{{ item.name }}</li>
+      <li v-if="!friends.length">Nenhum amigo</li>
+
+    </span>
     <span slot="principal">
       <publicar-conteudo-vue />
       <card-conteudo-vue v-for="item in listaConteudos" :key="item.id"
@@ -54,13 +61,11 @@ export default {
   name: 'Home',
   data () {
     return {
-      user: {
-        name: '',
-        url: '',
-        description: '',
+      user: { name: '', url: '', description: '',
       },
       urlNextPage: null,
       stopScroll: false,
+      friends:[],
 
     }
   },
@@ -85,6 +90,22 @@ export default {
         console.log(e)
         alert('Erro! Tente novamente mais tarde!')
       })
+      /*-----------------------------LISTAR OS AMIGOS DO USUARIO---------------------*/
+      this.$http.get(this.$urlAPI+'user/list_friend',{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
+      .then(response => {
+        if (response.data.success) {
+
+         this.friends = response.data.friends;
+
+        } else {
+          alert(response.data.error);
+        }
+      })
+      .catch(e => {
+        console.log(e)
+        alert('Erro! Tente novamente mais tarde!')
+      })
+
     }
   },
   components:{

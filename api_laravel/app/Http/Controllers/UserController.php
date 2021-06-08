@@ -160,4 +160,38 @@ class UserController extends Controller
         return response()->json(array("success"=>"Usuario alterado com sucesso","user"=>$user));
     }
 
+    protected function friend(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->id == $request->id){
+            return response()->json(array("error"=>"Id usuario é igual ao do amigo"));
+        }
+
+        if ($friend = User::where('id','=',$request->id)->first()) {
+            $user->friends()->toggle($friend->id); //adiciona ou remove amigo pelo id
+            return response()->json(array("success"=>"Amigo adicionado ou removido", "friends" => $user->friends));
+        }
+        return response()->json(array("error"=>"usuario não localizado"));
+    }
+
+    protected function list_friend(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user){
+            return response()->json(array("success"=>"Sucesso", "friends" => $user->friends));
+        }
+        return response()->json(array("error"=>"usuario não localizado"));
+    }
+
+    protected function list_friend_page(Request $request, $id)
+    {
+        $user = User::find($id);
+        $user_logged = $request->user();
+        if ($user){
+            return response()->json(array("success"=>"Sucesso", "friends" => $user->friends,"user_logged" =>$user_logged->friends()));
+        }
+        return response()->json(array("error"=>"usuario não localizado"));
+    }
 }

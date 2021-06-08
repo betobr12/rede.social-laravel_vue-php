@@ -13,10 +13,21 @@
             <router-link :to="'/pagina/'+userPage.id+'/'+$slug(userPage.name,{lower: true})">
               <h5>{{ userPage.name }}</h5>
             </router-link>
-            {{ userPage.description }}
+            <p>{{ userPage.description }}</p>
+          </span>
+          <span>
+            <button type="button" v-if="showButton" @click="friend(userPage.id)" class="btn-floating btn-large waves-effect waves-light color red">
+              <i class="medium material-icons">person_add</i>
+              </button>
           </span>
         </grid-vue>
       </div>
+    </span>
+
+    <span slot="menuesquerdoamigos">
+      <span><i class="medium material-icons">people</i></span>
+      <li>Marcio</li>
+      <li>Gustavo</li>
     </span>
 
     <span slot="principal">
@@ -56,12 +67,13 @@ export default {
       user: false,
       urlNextPage: null,
       stopScroll: false,
+      showButton: false,
       userPage: {
         name: '',
         url: '',
-        description: ''
-      }
+        description: '',
 
+      }
 
     }
   },
@@ -77,6 +89,11 @@ export default {
           this.$store.commit('setContentsTimeLine',response.data.content.data);
           this.urlNextPage = response.data.content.next_page_url;
           this.userPage = response.data.data_user_page;
+
+          if (this.userPage.id != this.user.id) {
+            this.showButton = true;
+
+          }
         }
       })
       .catch(e => {
@@ -93,6 +110,25 @@ export default {
     GridVue
   },
   methods: {
+    friend(id) {
+      this.$http.post(this.$urlAPI+'user/friend',{id:id},
+        {"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
+        .then(response => {
+          if (response.data.success) {
+
+            console.log(response.data);
+
+          } else {
+            alert(response.data.error);
+          }
+        }).catch(e => {
+        console.log(e)
+        alert('Erro! Tente novamente mais tarde!')
+        }
+      );
+
+    },
+
     handleScroll() {
       //console.log(document.body.clientHeight);//mostra a altura da tela
      // console.log(window.scrollY); //percorre a pagina no momento em que movimentamos
