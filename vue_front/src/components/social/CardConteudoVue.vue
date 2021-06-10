@@ -66,15 +66,23 @@ export default {
       showComment: false,
       descriptionComment: '',
       listComments: this.comments || [],
-
     }
   },
   components:{
     GridVue
   },
   methods: {
+
     likeContent(content_id, /*current_page*/) {
-        this.$http.put(this.$urlAPI+'like/'+content_id,
+
+      let url = '';
+      if (this.$route.name == "Home") {
+        url = 'like/';
+      } else {
+        url = 'like/page/';
+      }
+
+        this.$http.put(this.$urlAPI+url+content_id,
         //this.$http.put(this.$urlAPI+'like/'+content_id+'?page='+current_page,
         {},
         {"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
@@ -109,7 +117,13 @@ export default {
       if (!this.descriptionComment) {
         return;
       }
-      this.$http.put(this.$urlAPI+'comment/'+comment_id,{description: this.descriptionComment},
+      let url = '';
+      if (this.$route.name == "Home") {
+        url = 'comment/';
+      } else {
+        url = 'comment/page/';
+      }
+      this.$http.put(this.$urlAPI+url+comment_id,{description: this.descriptionComment},
 
       {"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
       .then(response => {

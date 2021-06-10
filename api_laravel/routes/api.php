@@ -55,9 +55,11 @@ Route::group(['middleware' => 'auth:api'], function(){
     });
     Route::prefix('like')->group(function($id) {
         Route::put('/{id}'     , [LikeController::class, 'like']);
+        Route::put('/page/{id}'     , [LikeController::class, 'like_page']);
     });
     Route::prefix('comment')->group(function($id) {
         Route::put('/{id}'     , [CommentController::class, 'comment']);
+        Route::put('/page/{id}'     , [CommentController::class, 'comment_page']);
     });
     Route::prefix('user')->group(function($id) {
         Route::post('/friend'               , [UserController::class, 'friend']);

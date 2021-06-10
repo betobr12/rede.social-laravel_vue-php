@@ -15,7 +15,18 @@ class ContentController extends Controller
 
     public function get()
     {
-        $content = new DataIndex();
+        $user = Auth::user();
+        $friends = $user->friends;
+        $data_friend = [];
+
+        foreach ($friends as $friend) {
+            array_push($data_friend,
+                $friend->id,
+            );
+        }
+
+        $content            = new DataIndex();
+        $content->friend_id = $data_friend;
         $content_list = $content->getContent();
         return array("content" => $content_list);
     }

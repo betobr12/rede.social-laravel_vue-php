@@ -11,13 +11,15 @@ class DataIndex
 {
 
     public $user_id;
+    public $friend_id;
 
     public function getContent()
     {
         $user = Auth::user();
-        $content          = new Content();
-        $content->user_id = $this->user_id;
-        $contents         = $content->getContents();
+        $content                    = new Content();
+        $content->user_id           = $this->user_id;
+        $content->friend_id         = $this->friend_id;
+        $contents                   = $content->getContents();
 
         foreach ($contents as $key => $cont) {
             $total_likes         = Like::count_like($cont->id)[0];

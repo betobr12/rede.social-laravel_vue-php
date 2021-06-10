@@ -17,7 +17,7 @@
           </span>
           <span>
             <button type="button" v-if="showButton" @click="friend(userPage.id)" class="btn-floating btn-large waves-effect waves-light color red">
-              <i class="medium material-icons">person_add</i>
+              <i class="medium material-icons">{{ textBtn }}</i>
               </button>
           </span>
         </grid-vue>
@@ -26,8 +26,17 @@
 
     <span slot="menuesquerdoamigos">
       <span><i class="medium material-icons">people</i></span>
-      <li>Marcio</li>
-      <li>Gustavo</li>
+      <router-link v-for="item in friends" :key="item.id" :to="'/pagina/'+item.id+'/'+$slug(item.name,{lower: true})">
+        <li  >{{ item.name }}</li>
+      </router-link>
+      <li v-if="!friends.length">Nenhum amigo</li>
+
+      <span><i class="medium material-icons">fast_forward</i></span>
+      <router-link v-for="item in followers" :key="item.id" :to="'/pagina/'+item.id+'/'+$slug(item.name,{lower: true})">
+        <li  >{{ item.name }}</li>
+      </router-link>
+      <li v-if="!followers.length">Nenhum amigo</li>
+
     </span>
 
     <span slot="principal">
@@ -68,39 +77,19 @@ export default {
       urlNextPage: null,
       stopScroll: false,
       showButton: false,
-      userPage: {
-        name: '',
-        url: '',
-        description: '',
-
-      }
+      userPage: { name: '', url: '', description: '' },
+      friends:[],
+      friendsLogged:[],
+      textBtn:'person_add',
+      followers:[]
 
     }
   },
+
   created() {
-    let usuarioAux = this.$store.getters.getUsuario; // para resgatar os valores da sessao criados no login.vue
-    if(usuarioAux){
-      this.user = this.$store.getters.getUsuario;
-      this.$http.get(this.$urlAPI+'content/page/'+this.$route.params.id,{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
-      .then(response => {
-        //console.log(response.data.content);
-        if (response.data.content) {
-          console.log(response.data.content);
-          this.$store.commit('setContentsTimeLine',response.data.content.data);
-          this.urlNextPage = response.data.content.next_page_url;
-          this.userPage = response.data.data_user_page;
 
-          if (this.userPage.id != this.user.id) {
-            this.showButton = true;
+    this.updatePage();
 
-          }
-        }
-      })
-      .catch(e => {
-        console.log(e)
-        alert('Erro! Tente novamente mais tarde!')
-      })
-    }
   },
   components:{
     CardConteudoVue,
@@ -109,14 +98,76 @@ export default {
     SiteTemplate,
     GridVue
   },
+
+  watch:{
+    '$route':'updatePage',//observa a mudança de pagina
+  },
+
   methods: {
+    updatePage() {
+      let usuarioAux = this.$store.getters.getUsuario; // para resgatar os valores da sessao criados no login.vue
+      if(usuarioAux){
+        this.user = this.$store.getters.getUsuario;
+        this.$http.get(this.$urlAPI+'content/page/'+this.$route.params.id,{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
+        .then(response => {
+          //console.log(response.data.content);
+
+          if (response.data.content) {
+            console.log(response.data.content);
+            this.$store.commit('setContentsTimeLine',response.data.content.data);
+            this.urlNextPage = response.data.content.next_page_url;
+            this.userPage = response.data.data_user_page;
+            if (this.userPage.id != this.user.id) {
+              this.showButton = true;
+            } else {
+              this.showButton = false;
+            }
+            /*-----------------------------LISTAR OS AMIGOS DO USUARIO---------------------*/
+          this.$http.get(this.$urlAPI+'user/list_friend_page/'+this.userPage.id,{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
+          .then(response => {
+            if (response.data.success) {
+              this.friends       = response.data.friends;
+              this.friendsLogged = response.data.user_logged;
+              this.followers     = response.data.followers;
+              this.isFriend();
+
+            } else {
+              alert(response.data.error);
+            }
+          })
+            .catch(e => {
+              console.log(e)
+              alert('Erro! Tente novamente mais tarde!')
+            })
+          }
+        })
+        .catch(e => {
+          console.log(e)
+          alert('Erro! Tente novamente mais tarde!')
+        })
+      }
+    },
+
+    isFriend() {
+
+      for (let friend of this.friendsLogged) {
+
+        if (friend.id == this.userPage.id) {
+          this.textBtn = 'remove_circle_outline';
+          return;
+        }
+      }
+      return this.textBtn = 'person_add';
+    },
+
     friend(id) {
       this.$http.post(this.$urlAPI+'user/friend',{id:id},
         {"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
         .then(response => {
           if (response.data.success) {
-
-            console.log(response.data);
+            this.friendsLogged = response.data.friends;
+            this.followers     = response.data.followers;
+            this.isFriend();
 
           } else {
             alert(response.data.error);
@@ -144,6 +195,7 @@ export default {
       }
 
     },
+
     pageLoad() {
       if (!this.urlNextPage) {
         return;
@@ -170,7 +222,9 @@ export default {
      return this.$store.getters.getContentsTimeLine;
     }
   }
+
 }
+
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>

@@ -170,7 +170,7 @@ class UserController extends Controller
 
         if ($friend = User::where('id','=',$request->id)->first()) {
             $user->friends()->toggle($friend->id); //adiciona ou remove amigo pelo id
-            return response()->json(array("success"=>"Amigo adicionado ou removido", "friends" => $user->friends));
+            return response()->json(array("success"=>"Amigo adicionado ou removido", "friends" => $user->friends, "followers"=>$friend->followers ));
         }
         return response()->json(array("error"=>"usuario não localizado"));
     }
@@ -180,7 +180,7 @@ class UserController extends Controller
         $user = $request->user();
 
         if ($user){
-            return response()->json(array("success"=>"Sucesso", "friends" => $user->friends));
+            return response()->json(array("success"=>"Sucesso", "friends" => $user->friends, "friends" => $user->friends, "followers"=>$user->followers));
         }
         return response()->json(array("error"=>"usuario não localizado"));
     }
@@ -190,7 +190,7 @@ class UserController extends Controller
         $user = User::find($id);
         $user_logged = $request->user();
         if ($user){
-            return response()->json(array("success"=>"Sucesso", "friends" => $user->friends,"user_logged" =>$user_logged->friends()));
+            return response()->json(array("success"=>"Sucesso", "friends" => $user->friends,"user_logged" =>$user_logged->friends, "followers"=>$user->followers));
         }
         return response()->json(array("error"=>"usuario não localizado"));
     }

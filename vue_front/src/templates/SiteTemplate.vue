@@ -48,12 +48,14 @@ export default {
       user: false // variavel criada para o template
     }
   },
+
   components: {
     NavBarVue,
     FooterVue,
     GridVue,
     CardMenuVue
   },
+
   created() {
     console.log('created()')
     let usuarioAux = this.$store.getters.getUsuario; // para resgatar os valores da sessao criados no login.vue
@@ -63,6 +65,7 @@ export default {
       this.$router.push('/login')
     }
   },
+
   methods: {
     sair() {
       this.$store.commit('setUsuario',null);
@@ -71,6 +74,7 @@ export default {
       this.$router.push('/login')
     }
   },
+
 }
 </script>
 <style>

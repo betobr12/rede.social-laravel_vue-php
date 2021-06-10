@@ -20,9 +20,16 @@
     //--teste = :current_page="current_page"
     <span slot="menuesquerdoamigos">
       <span><i class="medium material-icons">people</i></span>
-
-      <li v-for="item in friends" :key="item.id" >{{ item.name }}</li>
+      <router-link v-for="item in friends" :key="item.id" :to="'/pagina/'+item.id+'/'+$slug(item.name,{lower: true})">
+        <li  >{{ item.name }}</li>
+      </router-link>
       <li v-if="!friends.length">Nenhum amigo</li>
+
+      <span><i class="medium material-icons">fast_forward</i></span>
+      <router-link v-for="item in followers" :key="item.id" :to="'/pagina/'+item.id+'/'+$slug(item.name,{lower: true})">
+        <li  >{{ item.name }}</li>
+      </router-link>
+      <li v-if="!followers.length">Nenhum amigo</li>
 
     </span>
     <span slot="principal">
@@ -66,48 +73,15 @@ export default {
       urlNextPage: null,
       stopScroll: false,
       friends:[],
+      followers:[]
 
     }
   },
+
   created() {
-    let usuarioAux = this.$store.getters.getUsuario; // para resgatar os valores da sessao criados no login.vue
-
-    if(usuarioAux){
-      this.user = this.$store.getters.getUsuario;
-      this.$http.get(this.$urlAPI+'content',{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
-      .then(response => {
-
-        //this.current_page = response.data.content.current_page ?response.data.content.current_page : 1 ; //passa o numero da pagina atual via props
-
-        if (response.data.content)
-        {
-          console.log(response.data.content);
-          this.$store.commit('setContentsTimeLine',response.data.content.data);
-          this.urlNextPage = response.data.content.next_page_url;
-        }
-      })
-      .catch(e => {
-        console.log(e)
-        alert('Erro! Tente novamente mais tarde!')
-      })
-      /*-----------------------------LISTAR OS AMIGOS DO USUARIO---------------------*/
-      this.$http.get(this.$urlAPI+'user/list_friend',{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
-      .then(response => {
-        if (response.data.success) {
-
-         this.friends = response.data.friends;
-
-        } else {
-          alert(response.data.error);
-        }
-      })
-      .catch(e => {
-        console.log(e)
-        alert('Erro! Tente novamente mais tarde!')
-      })
-
-    }
+    this.updatePage();
   },
+
   components:{
     CardConteudoVue,
     CardDetalheVue,
@@ -115,8 +89,46 @@ export default {
     SiteTemplate,
     GridVue
   },
-  methods: {
 
+  watch:{ //observa a mudança de pagina
+    '$route':'updatePage',
+  },
+
+  methods: {
+    updatePage() {
+      let usuarioAux = this.$store.getters.getUsuario; // para resgatar os valores da sessao criados no login.vue
+      if(usuarioAux){
+        this.user = this.$store.getters.getUsuario;
+        this.$http.get(this.$urlAPI+'content',{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
+        .then(response => {
+          //this.current_page = response.data.content.current_page ?response.data.content.current_page : 1 ; //passa o numero da pagina atual via props
+          if (response.data.content)
+          {
+            console.log(response.data.content);
+            this.$store.commit('setContentsTimeLine',response.data.content.data);
+            this.urlNextPage = response.data.content.next_page_url;
+          }
+        })
+        .catch(e => {
+          console.log(e)
+          alert('Erro! Tente novamente mais tarde!')
+        })
+        /*-----------------------------LISTAR OS AMIGOS DO USUARIO---------------------*/
+        this.$http.get(this.$urlAPI+'user/list_friend',{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
+        .then(response => {
+          if (response.data.success) {
+           this.friends   = response.data.friends;
+           this.followers = response.data.followers;
+          } else {
+            alert(response.data.error);
+          }
+        })
+        .catch(e => {
+          console.log(e)
+          alert('Erro! Tente novamente mais tarde!')
+        })
+      }
+    },
   /*  handleScroll() {
       //console.log(document.body.clientHeight);//mostra a altura da tela
      // console.log(window.scrollY); //percorre a pagina no momento em que movimentamos
@@ -130,7 +142,6 @@ export default {
          //se não declaramos essa variavel, no fim da paginação gera uma duplicidade infinita --
         this.pageLoad();
       }
-
     },
     */
     pageLoad() {
