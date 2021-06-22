@@ -33,18 +33,15 @@ export default {
         password:this.password
       })
       .then(response => {
-        if(response.data.success) {
-          // login com sucesso
+        if(response.data.success) {          
           console.log('login com sucesso');
           this.$store.commit('setUsuario',response.data.user);
           sessionStorage.setItem('user',JSON.stringify(response.data.user));
           this.$router.push('/')
-        } else if (response.data.status == false) {
-          //login não existe
+        } else if (response.data.status == false) {          
           console.log('login não existe')
           alert('Login invalido!');
-        } else {
-          // erros de validação
+        } else {         
           console.log('erros de validação')
           let erros ='';
           for (let erro of Object.values(response.data.error)) {
@@ -53,8 +50,7 @@ export default {
           alert(erros);
         }
       })
-      .catch(e => {
-        console.log(e)
+      .catch(e => {        
         alert("Falha! Tente novamente mais tarde")
       })
     }
