@@ -30,7 +30,6 @@
         <li  >{{ item.name }}</li>
       </router-link>
       <li v-if="!friends.length">Nenhum amigo</li>
-
       <span><i class="medium material-icons">fast_forward</i></span>
       <router-link v-for="item in followers" :key="item.id" :to="'/pagina/'+item.id+'/'+$slug(item.name,{lower: true})">
         <li  >{{ item.name }}</li>
@@ -55,8 +54,7 @@
             :title="item.title"
             :description="item.description"
             :link="item.link" />
-      </card-conteudo-vue>
-     <!-- <button v-if="urlNextPage" @click="pageLoad()" class="btn blue">Mais... </button> -->
+      </card-conteudo-vue>     
       <div v-scroll="handleScroll"></div>
     </span>
   </site-template>
@@ -82,15 +80,13 @@ export default {
       friendsLogged:[],
       textBtn:'person_add',
       followers:[]
-
     }
   },
 
   created() {
-
     this.updatePage();
-
   },
+  
   components:{
     CardConteudoVue,
     CardDetalheVue,
@@ -100,20 +96,17 @@ export default {
   },
 
   watch:{
-    '$route':'updatePage',//observa a mudança de pagina
+    '$route':'updatePage',
   },
 
   methods: {
     updatePage() {
-      let usuarioAux = this.$store.getters.getUsuario; // para resgatar os valores da sessao criados no login.vue
+      let usuarioAux = this.$store.getters.getUsuario;
       if(usuarioAux){
         this.user = this.$store.getters.getUsuario;
         this.$http.get(this.$urlAPI+'content/page/'+this.$route.params.id,{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
         .then(response => {
-          //console.log(response.data.content);
-
-          if (response.data.content) {
-            console.log(response.data.content);
+          if (response.data.content) {            
             this.$store.commit('setContentsTimeLine',response.data.content.data);
             this.urlNextPage = response.data.content.next_page_url;
             this.userPage = response.data.data_user_page;
@@ -121,8 +114,7 @@ export default {
               this.showButton = true;
             } else {
               this.showButton = false;
-            }
-            /*-----------------------------LISTAR OS AMIGOS DO USUARIO---------------------*/
+            }            
           this.$http.get(this.$urlAPI+'user/list_friend_page/'+this.userPage.id,{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
           .then(response => {
             if (response.data.success) {
@@ -130,7 +122,6 @@ export default {
               this.friendsLogged = response.data.user_logged;
               this.followers     = response.data.followers;
               this.isFriend();
-
             } else {
               alert(response.data.error);
             }
@@ -149,9 +140,7 @@ export default {
     },
 
     isFriend() {
-
       for (let friend of this.friendsLogged) {
-
         if (friend.id == this.userPage.id) {
           this.textBtn = 'remove_circle_outline';
           return;
@@ -168,7 +157,6 @@ export default {
             this.friendsLogged = response.data.friends;
             this.followers     = response.data.followers;
             this.isFriend();
-
           } else {
             alert(response.data.error);
           }
@@ -177,23 +165,16 @@ export default {
         alert('Erro! Tente novamente mais tarde!')
         }
       );
-
     },
 
-    handleScroll() {
-      //console.log(document.body.clientHeight);//mostra a altura da tela
-     // console.log(window.scrollY); //percorre a pagina no momento em que movimentamos
+    handleScroll() {      
       if (this.stopScroll) {
         return;
-      }
-      //this.total = window.scrollY - document.body.clientHeight;
+      }      
       if (window.scrollY >= document.body.clientHeight - 949) {
-        this.stopScroll = true;
-        /*-- stopScroll evita duplicar o conteudo da pagina, a cada pagina mostrada uma nova chave é gerada,
-         se não declaramos essa variavel, no fim da paginação gera uma duplicidade infinita --*/
+        this.stopScroll = true;       
         this.pageLoad();
       }
-
     },
 
     pageLoad() {
@@ -201,8 +182,7 @@ export default {
         return;
       }
       this.$http.get(this.urlNextPage,{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
-      .then(response => {
-        console.log(response.data.content);
+      .then(response => {        
         if (response.data.content && this.$route.name == "Pagina") {
           this.$store.commit('setPaginationContentsTimeLine',response.data.content.data);
           this.urlNextPage = response.data.content.next_page_url;
@@ -213,7 +193,6 @@ export default {
         console.log(e)
         alert('Erro! Tente novamente mais tarde!')
       })
-
     },
   },
 
@@ -222,7 +201,6 @@ export default {
      return this.$store.getters.getContentsTimeLine;
     }
   }
-
 }
 
 </script>
