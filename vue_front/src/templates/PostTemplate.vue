@@ -33,7 +33,7 @@ export default {
   name: 'PostTemplate',
   data() {
     return {
-      user: false // variavel criada para o template
+      user: false
     }
   },
   components: {
