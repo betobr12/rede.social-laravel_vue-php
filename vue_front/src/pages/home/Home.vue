@@ -36,7 +36,6 @@
       <publicar-conteudo-vue />
       <card-conteudo-vue v-for="item in listaConteudos" :key="item.id"
         :content_id="item.id"
-
         :liked_content="item.liked_content"
         :total_likes="item.total_likes"
         :comments="item.comments"
@@ -51,8 +50,7 @@
             :description="item.description"
             :link="item.link" />
       </card-conteudo-vue>
-     <button v-if="urlNextPage" @click="pageLoad()" class="btn blue">Mais... </button>
-        <!--<div v-scroll="handleScroll"></div>-->
+     <button v-if="urlNextPage" @click="pageLoad()" class="btn blue">Mais... </button>      
     </span>
   </site-template>
 </template>
@@ -74,10 +72,9 @@ export default {
       stopScroll: false,
       friends:[],
       followers:[]
-
     }
   },
-
+  
   created() {
     this.updatePage();
   },
@@ -90,27 +87,24 @@ export default {
     GridVue
   },
 
-  watch:{ //observa a mudança de pagina
+  watch:{
     '$route':'updatePage',
   },
 
   methods: {
     updatePage() {
-      let usuarioAux = this.$store.getters.getUsuario; // para resgatar os valores da sessao criados no login.vue
+      let usuarioAux = this.$store.getters.getUsuario;
       if(usuarioAux){
         this.user = this.$store.getters.getUsuario;
         this.$http.get(this.$urlAPI+'content',{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
-        .then(response => {
-          //this.current_page = response.data.content.current_page ?response.data.content.current_page : 1 ; //passa o numero da pagina atual via props
+        .then(response => {          
           if (response.data.content)
-          {
-            console.log(response.data.content);
+          {          
             this.$store.commit('setContentsTimeLine',response.data.content.data);
             this.urlNextPage = response.data.content.next_page_url;
           }
         })
-        .catch(e => {
-          console.log(e)
+        .catch(e => {         
           alert('Erro! Tente novamente mais tarde!')
         })
         /*-----------------------------LISTAR OS AMIGOS DO USUARIO---------------------*/
@@ -128,44 +122,22 @@ export default {
           alert('Erro! Tente novamente mais tarde!')
         })
       }
-    },
-  /*  handleScroll() {
-      //console.log(document.body.clientHeight);//mostra a altura da tela
-     // console.log(window.scrollY); //percorre a pagina no momento em que movimentamos
-      if (this.stopScroll) {
-        return;
-      }
-      //this.total = window.scrollY - document.body.clientHeight;
-      if (window.scrollY >= document.body.clientHeight - 949) {
-        this.stopScroll = true;
-        // stopScroll evita duplicar o conteudo da pagina, a cada pagina mostrada uma nova chave é gerada,
-         //se não declaramos essa variavel, no fim da paginação gera uma duplicidade infinita --
-        this.pageLoad();
-      }
-    },
-    */
+    }, 
     pageLoad() {
       if (!this.urlNextPage) {
         return;
       }
       this.$http.get(this.urlNextPage,{"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
-      .then(response => {
-       console.log(response.data.content);
-
-       // this.current_page = response.data.content.current_page; //passa o numero da pagina atual via props
-
+      .then(response => {         
         if (response.data.content && this.$route.name == "Home") {
-
           this.$store.commit('setPaginationContentsTimeLine',response.data.content.data);
           this.urlNextPage = response.data.content.next_page_url;
           this.stopScroll = false;
         }
       })
-      .catch(e => {
-        console.log(e)
+      .catch(e => {        
         alert('Erro! Tente novamente mais tarde!')
       })
-
     },
   },
 
