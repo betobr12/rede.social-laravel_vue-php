@@ -1,9 +1,8 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
+
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import axios from 'axios' // usado para trazer os dados da api, foi colocado aqui afim de criar uma constante e utiliza -lo em todas as paginas
+import axios from 'axios'
 import Vuex from 'vuex'
 import slug from 'slug'
 
@@ -13,12 +12,12 @@ Vue.prototype.$http = axios
 Vue.prototype.$urlAPI = 'http://127.0.0.1:8000/api/'
 Vue.prototype.$slug = slug
 
-var store = { //vuex
+var store = { 
   state: {
     user: sessionStorage.getItem('user') ? this.user = JSON.parse(sessionStorage.getItem('user')) : null,
     contentsTimeLine: null,
   },
-  getters: { //receber listas e valores
+  getters: { 
 
     getUsuario: state => {
       return state.user;
@@ -30,7 +29,7 @@ var store = { //vuex
       return state.contentsTimeLine;
     }
   },
-  mutations: { //efetuar moodificações
+  mutations: { 
     setUsuario(state,n) {
       state.user = n;
     },
@@ -45,9 +44,7 @@ var store = { //vuex
         state.contentsTimeLine.push(item)
       }
     },
-
   }
-
 };
 
 Vue.directive('scroll', {
@@ -61,7 +58,6 @@ Vue.directive('scroll', {
   }
 })
 
-/* eslint-disable no-new */
 new Vue({
   el: '#app',
   store: new Vuex.Store(store),
