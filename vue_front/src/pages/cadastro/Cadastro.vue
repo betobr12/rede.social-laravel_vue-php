@@ -38,19 +38,15 @@ export default {
         password: this.password,
         password_confirmation: this.password_confirmation
       })
-      .then(response => {
-        console.log(response)
-        if (response.data.success) {
-          // login com sucesso
+      .then(response => {        
+        if (response.data.success) {          
           console.log('Cadastro realizado com sucesso')
           this.$store.commit('setUsuario',response.data.user);
           sessionStorage.setItem('user',JSON.stringify(response.data.user))
           this.$router.push('/')
-        } else if (response.data.status == false){
-          //Erro no cadastro
+        } else if (response.data.status == false){          
           alert('Falha ao cadastrar! Tente mais tarde');
-        } else {
-          // erros de validação
+        } else {          
           console.log('erros de validação')
           let erros ='';
           for (let erro of Object.values(response.data.error)) {
