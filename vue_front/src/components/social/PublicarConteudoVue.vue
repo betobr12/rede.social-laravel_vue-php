@@ -23,7 +23,6 @@
 
 <script>
 import GridVue from '@/components/layouts/GridVue'
-
 export default {
   name: 'PublicarConteudoVue',
   props:[],
@@ -53,27 +52,24 @@ export default {
       };
       reader.readAsDataURL(arquivo[0]);
     },
-    addContent() {
-      console.log(this.content);
+    addContent() {  
       this.$http.post(this.$urlAPI+'content',{
         title: this.content.title,
         description: this.content.description,
         link: this.content.link,
         image: this.content.image,
       },{"headers": {
-        "authorization":"Bearer "+this.$store.getters.getToken//recuperar token do usuario
+        "authorization":"Bearer "+this.$store.getters.getToken
         }
       }).then(response => {
-        if (response.data.success) {
-          console.log(response.data.content.data);
-          this.content = {title: '', description: '', link: '', image: '' }; //limpa as variaveis
+        if (response.data.success) {         
+          this.content = {title: '', description: '', link: '', image: '' };
           this.$store.commit('setContentsTimeLine',response.data.content.content.data)
           alert(response.data.success);
         } else {
           alert(response.data.error);
         }
-      }).catch(e => {
-        console.log(e)
+      }).catch(e => {        
         alert('Erro! Tente novamente mais tarde!')
         }
       )
