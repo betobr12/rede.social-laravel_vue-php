@@ -39,7 +39,7 @@ export default {
   name: 'SiteTemplate',
   data(){
     return{
-      user: false //variavel criada para o template
+      user: false 
     }
   },
   components: {
@@ -50,7 +50,7 @@ export default {
   },
   created(){
     console.log('created()');
-    let usuarioAux = this.$store.getters.getUsuario; // para resgatar os valores da sessao criados no login.vue
+    let usuarioAux = this.$store.getters.getUsuario; 
     if(usuarioAux){
       this.user = this.$store.getters.getUsuario;
       this.$router.push('/')
