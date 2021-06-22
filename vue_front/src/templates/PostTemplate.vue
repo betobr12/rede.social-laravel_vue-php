@@ -44,7 +44,7 @@ export default {
   },
   created() {
     console.log('created()')
-    let usuarioAux = this.$store.getters.getUsuario; // para resgatar os valores da sessao criados no login.vue
+    let usuarioAux = this.$store.getters.getUsuario;
     if (usuarioAux) {
       this.user = this.$store.getters.getUsuario;
     } else {
@@ -54,7 +54,7 @@ export default {
   methods: {
     sair() {
       this.$store.commit('setUsuario',null);
-      sessionStorage.clear(); //limpar a sessão
+      sessionStorage.clear(); 
       this.user = false
       this.$router.push('/login')
     }
