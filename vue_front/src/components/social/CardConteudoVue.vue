@@ -6,7 +6,7 @@
         <div class="row valign-wrapper">
           <grid-vue tamanho="1">
             <router-link :to="'/pagina/'+user_id+'/'+$slug(name,{lower: true})">
-             <img :src="profile" :alt="name" class="circle responsive-img"> <!-- notice the "circle" class -->
+             <img :src="profile" :alt="name" class="circle responsive-img">
             </router-link>
           </grid-vue>
           <grid-vue tamanho="11">
@@ -18,11 +18,10 @@
           </grid-vue>
         </div>
         <slot />
-
       </div>
       <div class="card-action">
         <p>
-          <a style="cursor:pointer"  @click="likeContent(content_id,/*current_page*/)">
+          <a style="cursor:pointer"  @click="likeContent(content_id)">
             <i class="material-icons">{{ like }}</i> {{ totalLikes }}
           </a>
 
@@ -30,7 +29,6 @@
             <i class="material-icons">insert_comment</i> {{ listComments.length }}
           </a>
         </p>
-
         <p v-if="showComment" class="right-align">
           <input type="text" v-model="descriptionComment" placeholder="Comentar">
           <button v-if="descriptionComment" @click="comment(content_id)" class="btn waves-effect waves-light orange"><i class="material-icons">send</i></button>
@@ -73,28 +71,20 @@ export default {
   },
   methods: {
 
-    likeContent(content_id, /*current_page*/) {
-
+    likeContent(content_id) {
       let url = '';
       if (this.$route.name == "Home") {
         url = 'like/';
       } else {
         url = 'like/page/';
       }
-
-        this.$http.put(this.$urlAPI+url+content_id,
-        //this.$http.put(this.$urlAPI+'like/'+content_id+'?page='+current_page,
+        this.$http.put(this.$urlAPI+url+content_id,        
         {},
         {"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
         .then(response => {
           if (response.status) {
-            //console.log(current_page);
-
-            this.totalLikes = response.data.likes; //valor do like não atualiza corretamente
-            console.log(response.data.content);
-
+            this.totalLikes = response.data.likes;           
             this.$store.commit('setContentsTimeLine',response.data.content.data);
-
             if (this.like == 'favorite_border') {
               this.like = 'favorite';
             } else {
@@ -103,8 +93,7 @@ export default {
           } else {
             alert(response.data.error);
           }
-        }).catch(e => {
-        console.log(e)
+        }).catch(e => {        
         alert('Erro! Tente novamente mais tarde!')
         }
       );
@@ -112,7 +101,6 @@ export default {
     openComment() {
       this.showComment = !this.showComment;
     },
-
     comment(comment_id) {
       if (!this.descriptionComment) {
         return;
@@ -127,23 +115,20 @@ export default {
 
       {"headers":{"authorization":"Bearer "+this.$store.getters.getToken}})
       .then(response => {
-        if (response.status) {
-          console.log(response.data.content);
+        if (response.status) {         
           alert('Comentario inserido com sucesso');
           this.descriptionComment = "";
           this.$store.commit('setContentsTimeLine',response.data.content.data);
         } else {
           alert(response.data.error);
         }
-      }).catch(e => {
-      console.log(e)
+      }).catch(e => {      
       alert('Erro! Tente novamente mais tarde!')
       });
     },
   },
 }
 </script>
-
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
