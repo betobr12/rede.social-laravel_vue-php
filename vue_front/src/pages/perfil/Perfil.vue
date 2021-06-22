@@ -26,8 +26,6 @@
 
 <script>
 import SiteTemplate from '@/templates/SiteTemplate';
-
-
 export default {
   name: 'Perfil',
   data () {
@@ -42,12 +40,11 @@ export default {
     }
   },
 
-  created() {
-    // para resgatar os valores da sessao criados no login.vue
-    let usuarioAux = this.$store.getters.getUsuario; // para resgatar os valores da sessao criados no login.vue
+  created() {   
+    let usuarioAux = this.$store.getters.getUsuario;
     if(usuarioAux){
       this.user = this.$store.getters.getUsuario;
-      this.name = this.user.name; // mostrando dados que estão na sessao
+      this.name = this.user.name; 
       this.email = this.user.email;
       this.description = this.user.description;
     }
@@ -59,30 +56,10 @@ export default {
 
   methods: {
     sair() {
-      sessionStorage.clear(); //limpar a sessão
+      sessionStorage.clear();
       this.user = false
-    },
-
-    /*
-      salvaImagem(e) {
-     // var preview = document.querySelector('img');
-      var file    = document.querySelector('input[type=file]').files[0];
-      var reader  = new FileReader();
-
-      reader.onloadend = (e) => {
-       // preview.src = reader.result;
-       this.imagem = reader.result;
-      }
-
-      if (file) {
-        reader.readAsDataURL(file);
-      } else {
-      //  preview.src = "";
-      }
-      console.log(this.imagem);
-    },
-    */
-
+    },  
+    
     salvaImagem(e){
       let arquivo = e.target.files || e.dataTransfer.files;
       if(!arquivo.length){
@@ -114,8 +91,7 @@ export default {
             sessionStorage.setItem('user',JSON.stringify(response.data.user))
             alert('Perfil atualizado!');
 
-          } else {
-            // erros de validação
+          } else {            
             console.log('erros de validação')
             let erros = '';
             for (let erro of Object.values(response.data.error)) {
