@@ -1,3 +1,5 @@
+![](https://komarev.com/ghpvc/?username=your-github-username)
+
 ## Rede Social
 
 <p align="center">
