@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class DataIndex
 {
-
     public $user_id;
     public $friend_id;
 
@@ -28,10 +27,10 @@ class DataIndex
             $liked               = $user->likes()->find($cont->id);
             $cont->user          = $user;
 
+            $cont->liked_content = false;
+
             if ($liked) {
                 $cont->liked_content = true;
-            } else {
-                $cont->liked_content = false;
             }
         }
         return (object) $contents;

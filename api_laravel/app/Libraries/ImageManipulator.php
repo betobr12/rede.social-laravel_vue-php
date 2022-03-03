@@ -48,8 +48,7 @@ class ImageManipulator
             $url =  $this->server.'storage/'.$this->directory.'/'.$this->id.'/'.$imageName;
             Storage::disk('public')->put($this->directory.'/'.$this->id.'/'.$imageName, base64_decode($file));
             return (object) array("image_name" => $imageName, "url" => $url);
-        } else {
-            return $imageName = $this->image_name;
-        }
+        } 
+        return $imageName = $this->image_name;        
     }    
 }
