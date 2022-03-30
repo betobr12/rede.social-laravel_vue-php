@@ -2,9 +2,6 @@
 
 ## Rede Social
 
-<p align="center">
-Esse sistema foi desenvolvido a fim de conhecer melhor o VUE js, o mesmo possuem funções padrões utilizadas em quase todas as redes sociais, curtir, comentar, pagina do usuario e do amigo. Algumas validações estão em aberto, talvez no futuro retome esse projeto para finaliza-las. O backend possue lógicas interessantes, caso queira se aprofundar e conhecer um pouco mais. Deixei dois conceitos de manipulação de dados, relationships e querys customizadas.
-</p>
 
 ## Requisitos
 
